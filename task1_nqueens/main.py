@@ -2,6 +2,7 @@
 Entry point of Task 1. Run from the `source` folder:
     python -m task1_nqueens                    -> interactive GUI
     python -m task1_nqueens sat 8              -> solve N=8 with Glucose3 and print the board
+    python -m task1_nqueens sat 100 --amo=seqcounter --column-alo   -> smaller / faster CNF encoding
     python -m task1_nqueens minconflicts 64    -> standard vs heuristic Min-Conflicts on N=64 (random and greedy init)
     python -m task1_nqueens minconflicts 64 --init=greedy
     python -m task1_nqueens benchmark --runs 20 [--init random|greedy|both]
@@ -25,7 +26,8 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
 
     if command == "sat":
         from task1_nqueens.solvers.sat_solver import SatNQueensSolver
-        result = SatNQueensSolver().solve(n)
+        amo = next((arg.split("=", 1)[1] for arg in argv if arg.startswith("--amo=")), "pairwise")
+        result = SatNQueensSolver(amo, column_alo="--column-alo" in argv).solve(n)
         print(result.summary())
         if n <= 30:
             print_board(result.columns)
