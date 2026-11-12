@@ -163,9 +163,34 @@ The tests cover:
 ### Results
 
 Stored in [`task1_nqueens/results/`](task1_nqueens/results/):
-`sat_glucose3.csv` (variables, clauses, encode and solve time for N = 4…100),
-`min_conflicts.csv` (success rate, steps and time for N = 8…1000, 20 seeds per configuration)
-and `nqueens_experiments.png`.
+
+- **`sat_glucose3.csv`**: variables, clauses, and encode / load / search / solve time per encoding.
+  - Covers N = 4…200; each timing is the median of 3 runs.
+  - Each encoding stops at a different N: pairwise at 100, pairwise+alo at 128, seqcounter+alo at 200.
+- **`min_conflicts.csv`**: success rate, attacking pairs at the start, steps, restarts and time per strategy and start mode.
+  - Covers N = 8…10,000 with 20 seeds per configuration.
+  - The random start stops at N = 5000.
+- **`nqueens_experiments.png`**: plots of the above.
+
+Highlights:
+
+| Glucose3, N = 100 | clauses | encode + solve |
+|---|---:|---:|
+| pairwise | 1,646,800 | 5.7 s |
+| pairwise + column ALO | 1,646,900 | 0.82 s |
+| seqcounter + column ALO | 117,788 | 0.12 s |
+
+| Min-Conflicts, 20 seeds | standard: mean steps / median ms | heuristic: mean steps / median ms |
+|---|---:|---:|
+| N = 1000, random start | 710 / 68 | 544 / 53 |
+| N = 1000, greedy start | 103 / 11 | 51 / 7.4 |
+| N = 5000, random start | 3155 / 1221 | 2482 / 1097 |
+| N = 10000, greedy start | 167 / 183 | 123 / 129 |
+
+- **Heuristic vs standard:** the proposed heuristic needs fewer steps than the standard version at every N, with both start modes. All runs succeed.
+- **Greedy start:** starting greedy cuts the attacking pairs at the start (N = 1000: from about 1155 to about 17) and the time by roughly 5–20× for N ≥ 1000. The gain is small for N ≤ 64.
+- **Column ALO:** these redundant clauses are what make Glucose3 fast.
+- **Sequential counter:** it shrinks the formula by about 14× at N = 100. Its search time varies more, though: about 0.6 s at N = 48 against 11 ms at N = 64.
 
 ---
 
