@@ -1,31 +1,31 @@
 match,map,map_seed,player_1,player_2,outcome,turns,p1_ms_per_move,p2_ms_per_move
-1,Random symmetric,7,Minimax,Alpha-Beta,Draw,120,100.32,38.84
-2,Random symmetric,7,Alpha-Beta,Minimax,Draw,120,35.75,100.07
-3,Random symmetric,7,Minimax,Heuristic Minimax,Player 2 wins,22,92.75,93.09
-4,Random symmetric,7,Heuristic Minimax,Minimax,Draw,120,100.46,100.09
-5,Random symmetric,7,Minimax,Heuristic Alpha-Beta,Player 2 wins,23,93.22,83.23
-6,Random symmetric,7,Heuristic Alpha-Beta,Minimax,Player 1 wins,23,77.53,92.88
-7,Random symmetric,7,Minimax,Random,Draw,120,100.08,0.01
-8,Random symmetric,7,Random,Minimax,Draw,120,0.01,100.03
-9,Random symmetric,7,Minimax,Greedy Hunter [plugin],Player 2 wins,24,93.67,0.01
-10,Random symmetric,7,Greedy Hunter [plugin],Minimax,Player 1 wins,24,0.01,93.67
-11,Random symmetric,7,Alpha-Beta,Heuristic Minimax,Player 2 wins,25,33.21,94.43
-12,Random symmetric,7,Heuristic Minimax,Alpha-Beta,Player 1 wins,22,93.62,34.38
-13,Random symmetric,7,Alpha-Beta,Heuristic Alpha-Beta,Player 2 wins,22,33.66,75.56
-14,Random symmetric,7,Heuristic Alpha-Beta,Alpha-Beta,Player 1 wins,23,78.11,35.81
-15,Random symmetric,7,Alpha-Beta,Random,Draw,120,32.6,0.01
-16,Random symmetric,7,Random,Alpha-Beta,Draw,120,0.01,31.14
-17,Random symmetric,7,Alpha-Beta,Greedy Hunter [plugin],Player 2 wins,24,33.55,0.01
-18,Random symmetric,7,Greedy Hunter [plugin],Alpha-Beta,Player 1 wins,24,0.02,33.82
-19,Random symmetric,7,Heuristic Minimax,Heuristic Alpha-Beta,Draw,15,102.35,90.94
-20,Random symmetric,7,Heuristic Alpha-Beta,Heuristic Minimax,Draw,15,90.01,101.98
-21,Random symmetric,7,Heuristic Minimax,Random,Player 1 wins,24,97.85,0.01
-22,Random symmetric,7,Random,Heuristic Minimax,Player 2 wins,22,0.01,94.11
-23,Random symmetric,7,Heuristic Minimax,Greedy Hunter [plugin],Player 1 wins,17,102.46,0.01
-24,Random symmetric,7,Greedy Hunter [plugin],Heuristic Minimax,Player 2 wins,17,0.01,101.87
-25,Random symmetric,7,Heuristic Alpha-Beta,Random,Player 1 wins,22,74.29,0.01
-26,Random symmetric,7,Random,Heuristic Alpha-Beta,Player 2 wins,22,0.01,69.26
-27,Random symmetric,7,Heuristic Alpha-Beta,Greedy Hunter [plugin],Player 1 wins,17,96.2,0.01
-28,Random symmetric,7,Greedy Hunter [plugin],Heuristic Alpha-Beta,Player 2 wins,17,0.01,97.37
+1,Random symmetric,7,Minimax,Alpha-Beta,Draw,120,98.92,10.16
+2,Random symmetric,7,Alpha-Beta,Minimax,Draw,120,10.22,98.86
+3,Random symmetric,7,Minimax,Heuristic Minimax,Player 2 wins,22,91.45,92.09
+4,Random symmetric,7,Heuristic Minimax,Minimax,Draw,120,99.29,98.86
+5,Random symmetric,7,Minimax,Heuristic Alpha-Beta,Player 2 wins,23,91.89,26.41
+6,Random symmetric,7,Heuristic Alpha-Beta,Minimax,Player 1 wins,23,19.35,91.77
+7,Random symmetric,7,Minimax,Random,Draw,120,98.89,0.01
+8,Random symmetric,7,Random,Minimax,Draw,120,0.01,98.84
+9,Random symmetric,7,Minimax,Greedy Hunter [plugin],Player 2 wins,24,92.24,0.01
+10,Random symmetric,7,Greedy Hunter [plugin],Minimax,Player 1 wins,24,0.01,92.16
+11,Random symmetric,7,Alpha-Beta,Heuristic Minimax,Player 2 wins,25,12.51,93.02
+12,Random symmetric,7,Heuristic Minimax,Alpha-Beta,Draw,120,99.27,14.15
+13,Random symmetric,7,Alpha-Beta,Heuristic Alpha-Beta,Player 2 wins,25,12.35,19.56
+14,Random symmetric,7,Heuristic Alpha-Beta,Alpha-Beta,Player 1 wins,23,20.89,13.1
+15,Random symmetric,7,Alpha-Beta,Random,Draw,120,10.06,0.0
+16,Random symmetric,7,Random,Alpha-Beta,Draw,120,0.0,9.58
+17,Random symmetric,7,Alpha-Beta,Greedy Hunter [plugin],Player 2 wins,24,12.74,0.0
+18,Random symmetric,7,Greedy Hunter [plugin],Alpha-Beta,Player 1 wins,24,0.0,12.54
+19,Random symmetric,7,Heuristic Minimax,Heuristic Alpha-Beta,Draw,15,100.93,30.05
+20,Random symmetric,7,Heuristic Alpha-Beta,Heuristic Minimax,Draw,15,30.21,100.91
+21,Random symmetric,7,Heuristic Minimax,Random,Player 1 wins,24,96.5,0.01
+22,Random symmetric,7,Random,Heuristic Minimax,Player 2 wins,22,0.01,92.08
+23,Random symmetric,7,Heuristic Minimax,Greedy Hunter [plugin],Player 1 wins,17,100.93,0.01
+24,Random symmetric,7,Greedy Hunter [plugin],Heuristic Minimax,Player 2 wins,17,0.01,100.88
+25,Random symmetric,7,Heuristic Alpha-Beta,Random,Player 1 wins,22,20.4,0.0
+26,Random symmetric,7,Random,Heuristic Alpha-Beta,Player 2 wins,22,0.01,16.34
+27,Random symmetric,7,Heuristic Alpha-Beta,Greedy Hunter [plugin],Player 1 wins,18,42.16,0.01
+28,Random symmetric,7,Greedy Hunter [plugin],Heuristic Alpha-Beta,Player 2 wins,18,0.01,41.35
 29,Random symmetric,7,Random,Greedy Hunter [plugin],Player 2 wins,24,0.0,0.0
 30,Random symmetric,7,Greedy Hunter [plugin],Random,Player 1 wins,28,0.0,0.0

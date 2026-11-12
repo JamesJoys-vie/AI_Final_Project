@@ -1,0 +1,145 @@
+state,budget_ms,config,depth,nodes,time_ms,forced_result
+opening,50,Minimax,2,6161,51.99,False
+opening,50,Alpha-Beta,4,6488,51.54,False
+opening,50,Heuristic Minimax,2,4113,50.74,False
+opening,50,Heuristic Alpha-Beta,3,3136,51.86,False
+opening,150,Minimax,2,14865,151.17,False
+opening,150,Alpha-Beta,4,19544,151.29,False
+opening,150,Heuristic Minimax,2,12305,150.38,False
+opening,150,Heuristic Alpha-Beta,4,9304,151.55,False
+opening,500,Minimax,3,59383,500.69,False
+opening,500,Alpha-Beta,5,66023,500.3,False
+opening,500,Heuristic Minimax,2,39697,500.41,False
+opening,500,Heuristic Alpha-Beta,4,31064,501.75,False
+duel,50,Minimax,2,5661,51.67,False
+duel,50,Alpha-Beta,4,6601,51.75,False
+duel,50,Heuristic Minimax,2,3357,53.31,False
+duel,50,Heuristic Alpha-Beta,3,2467,53.07,False
+duel,150,Minimax,2,16925,151.92,False
+duel,150,Alpha-Beta,4,19145,151.12,False
+duel,150,Heuristic Minimax,2,9757,153.5,False
+duel,150,Heuristic Alpha-Beta,4,6849,150.77,False
+duel,500,Minimax,3,57479,500.31,False
+duel,500,Alpha-Beta,5,64012,501.97,False
+duel,500,Heuristic Minimax,2,32797,501.07,False
+duel,500,Heuristic Alpha-Beta,4,23233,500.7,False
+siege,50,Minimax,2,6744,50.59,False
+siege,50,Alpha-Beta,4,7232,50.73,False
+siege,50,Heuristic Minimax,2,4440,50.24,False
+siege,50,Heuristic Alpha-Beta,3,2906,50.26,False
+siege,150,Minimax,2,20312,150.54,False
+siege,150,Alpha-Beta,4,21056,150.41,False
+siege,150,Heuristic Minimax,2,12888,150.72,False
+siege,150,Heuristic Alpha-Beta,4,9024,151.4,False
+siege,500,Minimax,3,66416,500.92,False
+siege,500,Alpha-Beta,5,70399,500.18,False
+siege,500,Heuristic Minimax,2,47448,500.38,False
+siege,500,Heuristic Alpha-Beta,5,28927,502.86,False
+bullets,50,Minimax,2,4863,51.08,False
+bullets,50,Alpha-Beta,4,5567,50.87,False
+bullets,50,Heuristic Minimax,2,2559,51.03,False
+bullets,50,Heuristic Alpha-Beta,3,2299,54.7,False
+bullets,150,Minimax,2,14591,150.94,False
+bullets,150,Alpha-Beta,5,17797,151.07,False
+bullets,150,Heuristic Minimax,2,8703,152.01,False
+bullets,150,Heuristic Alpha-Beta,3,6907,153.39,False
+bullets,500,Minimax,3,50528,500.53,False
+bullets,500,Alpha-Beta,5,61061,501.28,False
+bullets,500,Heuristic Minimax,3,29792,504.18,False
+bullets,500,Heuristic Alpha-Beta,4,23430,502.47,False
+map:classic,50,Minimax,2,6161,50.58,False
+map:classic,50,Alpha-Beta,4,6488,51.05,False
+map:classic,50,Heuristic Minimax,2,4113,51.01,False
+map:classic,50,Heuristic Alpha-Beta,3,3136,50.69,False
+map:classic,150,Minimax,2,15377,151.0,False
+map:classic,150,Alpha-Beta,4,19800,151.21,False
+map:classic,150,Heuristic Minimax,2,12049,151.04,False
+map:classic,150,Heuristic Alpha-Beta,4,9304,153.05,False
+map:classic,500,Minimax,3,60663,501.61,False
+map:classic,500,Alpha-Beta,5,65255,501.54,False
+map:classic,500,Heuristic Minimax,2,39697,500.71,False
+map:classic,500,Heuristic Alpha-Beta,4,30808,502.87,False
+map:fortress,50,Minimax,2,7256,51.72,False
+map:fortress,50,Alpha-Beta,4,7544,51.5,False
+map:fortress,50,Heuristic Minimax,2,5208,51.11,False
+map:fortress,50,Heuristic Alpha-Beta,3,3422,51.9,False
+map:fortress,150,Minimax,2,21592,150.35,False
+map:fortress,150,Alpha-Beta,4,22136,150.3,False
+map:fortress,150,Heuristic Minimax,2,15704,151.12,False
+map:fortress,150,Heuristic Alpha-Beta,4,10360,150.36,False
+map:fortress,500,Minimax,3,71884,500.27,False
+map:fortress,500,Alpha-Beta,5,73429,501.46,False
+map:fortress,500,Heuristic Minimax,3,51916,500.63,False
+map:fortress,500,Heuristic Alpha-Beta,5,34005,503.68,False
+map:large_arena,50,Minimax,2,6744,50.63,False
+map:large_arena,50,Alpha-Beta,4,7266,50.25,False
+map:large_arena,50,Heuristic Minimax,2,5208,51.97,False
+map:large_arena,50,Heuristic Alpha-Beta,3,3420,53.3,False
+map:large_arena,150,Minimax,2,20056,151.1,False
+map:large_arena,150,Alpha-Beta,4,21346,151.65,False
+map:large_arena,150,Heuristic Minimax,2,15448,151.43,False
+map:large_arena,150,Heuristic Alpha-Beta,4,10594,151.19,False
+map:large_arena,500,Minimax,3,67357,500.84,False
+map:large_arena,500,Alpha-Beta,5,73039,500.12,False
+map:large_arena,500,Heuristic Minimax,3,49693,501.66,False
+map:large_arena,500,Heuristic Alpha-Beta,5,34383,502.68,False
+map:open_field,50,Minimax,2,7000,50.63,False
+map:open_field,50,Alpha-Beta,4,7546,50.28,False
+map:open_field,50,Heuristic Minimax,2,5208,50.81,False
+map:open_field,50,Heuristic Alpha-Beta,3,3422,52.03,False
+map:open_field,150,Minimax,2,21336,151.29,False
+map:open_field,150,Alpha-Beta,4,21626,150.64,False
+map:open_field,150,Heuristic Minimax,2,15448,150.84,False
+map:open_field,150,Heuristic Alpha-Beta,4,10618,152.42,False
+map:open_field,500,Minimax,3,70348,500.61,False
+map:open_field,500,Alpha-Beta,5,72955,501.16,False
+map:open_field,500,Heuristic Minimax,3,51916,501.98,False
+map:open_field,500,Heuristic Alpha-Beta,5,33787,502.92,False
+map:wide_front,50,Minimax,2,7000,50.42,False
+map:wide_front,50,Alpha-Beta,4,7520,50.72,False
+map:wide_front,50,Heuristic Minimax,2,4952,52.45,False
+map:wide_front,50,Heuristic Alpha-Beta,3,3420,53.34,False
+map:wide_front,150,Minimax,2,21336,151.18,False
+map:wide_front,150,Alpha-Beta,4,20832,150.87,False
+map:wide_front,150,Heuristic Minimax,2,14424,150.99,False
+map:wide_front,150,Heuristic Alpha-Beta,4,9824,152.02,False
+map:wide_front,500,Minimax,3,68637,501.81,False
+map:wide_front,500,Alpha-Beta,5,70687,501.42,False
+map:wide_front,500,Heuristic Minimax,2,47704,500.34,False
+map:wide_front,500,Heuristic Alpha-Beta,5,32287,502.64,False
+random 13x13,50,Minimax,2,6161,51.39,False
+random 13x13,50,Alpha-Beta,4,6226,51.52,False
+random 13x13,50,Heuristic Minimax,2,3857,53.52,False
+random 13x13,50,Heuristic Alpha-Beta,3,3136,53.73,False
+random 13x13,150,Minimax,2,13841,150.99,False
+random 13x13,150,Alpha-Beta,4,18002,151.29,False
+random 13x13,150,Heuristic Minimax,2,11537,151.0,False
+random 13x13,150,Heuristic Alpha-Beta,4,9175,150.71,False
+random 13x13,500,Minimax,3,49399,500.84,False
+random 13x13,500,Alpha-Beta,5,63869,501.53,False
+random 13x13,500,Heuristic Minimax,2,39441,501.88,False
+random 13x13,500,Heuristic Alpha-Beta,5,31749,500.96,False
+random 17x17,50,Minimax,2,6161,51.41,False
+random 17x17,50,Alpha-Beta,4,6884,51.18,False
+random 17x17,50,Heuristic Minimax,2,4625,51.2,False
+random 17x17,50,Heuristic Alpha-Beta,3,3402,53.47,False
+random 17x17,150,Minimax,2,18705,151.53,False
+random 17x17,150,Alpha-Beta,4,19940,151.15,False
+random 17x17,150,Heuristic Minimax,2,13841,151.63,False
+random 17x17,150,Heuristic Alpha-Beta,4,10468,151.8,False
+random 17x17,500,Minimax,3,65278,501.44,False
+random 17x17,500,Alpha-Beta,5,65553,501.07,False
+random 17x17,500,Heuristic Minimax,3,48126,502.42,False
+random 17x17,500,Heuristic Alpha-Beta,5,33297,501.65,False
+random 21x21,50,Minimax,2,6417,51.1,False
+random 21x21,50,Alpha-Beta,4,7116,51.35,False
+random 21x21,50,Heuristic Minimax,2,4881,52.19,False
+random 21x21,50,Heuristic Alpha-Beta,3,3400,53.87,False
+random 21x21,150,Minimax,2,19217,151.41,False
+random 21x21,150,Alpha-Beta,4,20684,150.95,False
+random 21x21,150,Heuristic Minimax,2,14097,150.87,False
+random 21x21,150,Heuristic Alpha-Beta,4,10444,152.0,False
+random 21x21,500,Minimax,3,65887,501.52,False
+random 21x21,500,Alpha-Beta,5,71257,500.88,False
+random 21x21,500,Heuristic Minimax,3,48223,501.37,False
+random 21x21,500,Heuristic Alpha-Beta,5,33881,503.24,False

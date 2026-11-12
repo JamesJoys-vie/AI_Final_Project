@@ -1,0 +1,160 @@
+opening                  50 ms Minimax                depth=2    nodes=   11,281 time=    51.3 ms
+opening                  50 ms Alpha-Beta             depth=4    nodes=   16,984 time=    50.2 ms
+opening                  50 ms Heuristic Minimax      depth=2    nodes=    8,209 time=    51.1 ms
+opening                  50 ms Heuristic Alpha-Beta   depth=4    nodes=    6,616 time=    50.5 ms
+opening                 150 ms Minimax                depth=2    nodes=   37,649 time=   150.4 ms
+opening                 150 ms Alpha-Beta             depth=5    nodes=   53,735 time=   150.3 ms
+opening                 150 ms Heuristic Minimax      depth=2    nodes=   21,777 time=   150.4 ms
+opening                 150 ms Heuristic Alpha-Beta   depth=5    nodes=   20,367 time=   150.8 ms
+opening                 500 ms Minimax                depth=3    nodes=  132,855 time=   500.6 ms
+opening                 500 ms Alpha-Beta             depth=6    nodes=  187,505 time=   500.4 ms
+opening                 500 ms Heuristic Minimax      depth=3    nodes=   89,079 time=   500.6 ms
+opening                 500 ms Heuristic Alpha-Beta   depth=6    nodes=   67,084 time=   501.1 ms
+duel                     50 ms Minimax                depth=2    nodes=   13,341 time=    50.1 ms
+duel                     50 ms Alpha-Beta             depth=4    nodes=   17,097 time=    50.6 ms
+duel                     50 ms Heuristic Minimax      depth=2    nodes=    6,429 time=    50.7 ms
+duel                     50 ms Heuristic Alpha-Beta   depth=4    nodes=    4,724 time=    51.1 ms
+duel                    150 ms Minimax                depth=2    nodes=   40,989 time=   150.7 ms
+duel                    150 ms Alpha-Beta             depth=5    nodes=   50,188 time=   150.3 ms
+duel                    150 ms Heuristic Minimax      depth=2    nodes=   19,741 time=   150.7 ms
+duel                    150 ms Heuristic Alpha-Beta   depth=4    nodes=   14,964 time=   150.8 ms
+duel                    500 ms Minimax                depth=3    nodes=  142,983 time=   500.2 ms
+duel                    500 ms Alpha-Beta             depth=6    nodes=  168,854 time=   500.1 ms
+duel                    500 ms Heuristic Minimax      depth=3    nodes=   69,511 time=   500.5 ms
+duel                    500 ms Heuristic Alpha-Beta   depth=5    nodes=   47,976 time=   502.2 ms
+siege                    50 ms Minimax                depth=2    nodes=   17,240 time=    50.3 ms
+siege                    50 ms Alpha-Beta             depth=4    nodes=   18,752 time=    50.3 ms
+siege                    50 ms Heuristic Minimax      depth=2    nodes=    9,048 time=    50.3 ms
+siege                    50 ms Heuristic Alpha-Beta   depth=5    nodes=    5,341 time=    50.7 ms
+siege                   150 ms Minimax                depth=3    nodes=   50,288 time=   150.3 ms
+siege                   150 ms Alpha-Beta             depth=5    nodes=   55,295 time=   150.1 ms
+siege                   150 ms Heuristic Minimax      depth=2    nodes=   29,272 time=   150.5 ms
+siege                   150 ms Heuristic Alpha-Beta   depth=6    nodes=   15,319 time=   152.2 ms
+siege                   500 ms Minimax                depth=3    nodes=  169,072 time=   501.1 ms
+siege                   500 ms Alpha-Beta             depth=6    nodes=  187,969 time=   500.4 ms
+siege                   500 ms Heuristic Minimax      depth=3    nodes=   97,392 time=   500.8 ms
+siege                   500 ms Heuristic Alpha-Beta   depth=7    nodes=   50,514 time=   501.7 ms
+bullets                  50 ms Minimax                depth=2    nodes=    9,983 time=    50.2 ms
+bullets                  50 ms Alpha-Beta             depth=4    nodes=   14,271 time=    50.8 ms
+bullets                  50 ms Heuristic Minimax      depth=2    nodes=    5,887 time=    52.4 ms
+bullets                  50 ms Heuristic Alpha-Beta   depth=4    nodes=    4,494 time=    52.0 ms
+bullets                 150 ms Minimax                depth=3    nodes=   33,120 time=   150.6 ms
+bullets                 150 ms Alpha-Beta             depth=5    nodes=   47,749 time=   150.3 ms
+bullets                 150 ms Heuristic Minimax      depth=2    nodes=   16,895 time=   152.2 ms
+bullets                 150 ms Heuristic Alpha-Beta   depth=4    nodes=   14,222 time=   151.6 ms
+bullets                 500 ms Minimax                depth=3    nodes=  122,464 time=   500.4 ms
+bullets                 500 ms Alpha-Beta             depth=6    nodes=  167,331 time=   500.3 ms
+bullets                 500 ms Heuristic Minimax      depth=3    nodes=   60,512 time=   500.6 ms
+bullets                 500 ms Heuristic Alpha-Beta   depth=5    nodes=   50,318 time=   501.6 ms
+map:classic              50 ms Minimax                depth=2    nodes=   11,793 time=    50.5 ms
+map:classic              50 ms Alpha-Beta             depth=4    nodes=   16,984 time=    50.3 ms
+map:classic              50 ms Heuristic Minimax      depth=2    nodes=    7,697 time=    50.3 ms
+map:classic              50 ms Heuristic Alpha-Beta   depth=4    nodes=    6,872 time=    51.4 ms
+map:classic             150 ms Minimax                depth=2    nodes=   41,489 time=   150.5 ms
+map:classic             150 ms Alpha-Beta             depth=5    nodes=   54,503 time=   150.3 ms
+map:classic             150 ms Heuristic Minimax      depth=2    nodes=   22,033 time=   150.6 ms
+map:classic             150 ms Heuristic Alpha-Beta   depth=5    nodes=   19,855 time=   151.4 ms
+map:classic             500 ms Minimax                depth=3    nodes=  142,583 time=   500.4 ms
+map:classic             500 ms Alpha-Beta             depth=6    nodes=  184,177 time=   500.4 ms
+map:classic             500 ms Heuristic Minimax      depth=3    nodes=   88,567 time=   500.9 ms
+map:classic             500 ms Heuristic Alpha-Beta   depth=6    nodes=   65,804 time=   500.6 ms
+map:fortress             50 ms Minimax                depth=2    nodes=   19,800 time=    50.3 ms
+map:fortress             50 ms Alpha-Beta             depth=4    nodes=   19,832 time=    50.4 ms
+map:fortress             50 ms Heuristic Minimax      depth=2    nodes=   11,864 time=    50.1 ms
+map:fortress             50 ms Heuristic Alpha-Beta   depth=5    nodes=    7,479 time=    50.8 ms
+map:fortress            150 ms Minimax                depth=3    nodes=   57,548 time=   150.3 ms
+map:fortress            150 ms Alpha-Beta             depth=5    nodes=   58,837 time=   150.2 ms
+map:fortress            150 ms Heuristic Minimax      depth=2    nodes=   35,928 time=   150.7 ms
+map:fortress            150 ms Heuristic Alpha-Beta   depth=6    nodes=   21,689 time=   151.6 ms
+map:fortress            500 ms Minimax                depth=3    nodes=  190,156 time=   500.3 ms
+map:fortress            500 ms Alpha-Beta             depth=6    nodes=  192,649 time=   500.4 ms
+map:fortress            500 ms Heuristic Minimax      depth=3    nodes=  115,660 time=   501.0 ms
+map:fortress            500 ms Heuristic Alpha-Beta   depth=7    nodes=   71,010 time=   500.9 ms
+map:large_arena          50 ms Minimax                depth=2    nodes=   17,752 time=    50.3 ms
+map:large_arena          50 ms Alpha-Beta             depth=4    nodes=   19,298 time=    50.4 ms
+map:large_arena          50 ms Heuristic Minimax      depth=2    nodes=   11,352 time=    50.5 ms
+map:large_arena          50 ms Heuristic Alpha-Beta   depth=5    nodes=    7,513 time=    50.1 ms
+map:large_arena         150 ms Minimax                depth=3    nodes=   52,509 time=   150.5 ms
+map:large_arena         150 ms Alpha-Beta             depth=5    nodes=   57,167 time=   150.3 ms
+map:large_arena         150 ms Heuristic Minimax      depth=2    nodes=   31,576 time=   150.7 ms
+map:large_arena         150 ms Heuristic Alpha-Beta   depth=5    nodes=   23,129 time=   150.8 ms
+map:large_arena         500 ms Minimax                depth=3    nodes=  174,621 time=   500.4 ms
+map:large_arena         500 ms Alpha-Beta             depth=6    nodes=  192,763 time=   500.5 ms
+map:large_arena         500 ms Heuristic Minimax      depth=3    nodes=  112,669 time=   500.6 ms
+map:large_arena         500 ms Heuristic Alpha-Beta   depth=6    nodes=   76,593 time=   500.5 ms
+map:open_field           50 ms Minimax                depth=2    nodes=   19,544 time=    50.3 ms
+map:open_field           50 ms Alpha-Beta             depth=4    nodes=   19,578 time=    50.5 ms
+map:open_field           50 ms Heuristic Minimax      depth=2    nodes=   11,608 time=    50.2 ms
+map:open_field           50 ms Heuristic Alpha-Beta   depth=5    nodes=    7,611 time=    50.6 ms
+map:open_field          150 ms Minimax                depth=3    nodes=   58,060 time=   150.5 ms
+map:open_field          150 ms Alpha-Beta             depth=5    nodes=   57,339 time=   150.3 ms
+map:open_field          150 ms Heuristic Minimax      depth=2    nodes=   35,416 time=   150.7 ms
+map:open_field          150 ms Heuristic Alpha-Beta   depth=5    nodes=   21,947 time=   150.8 ms
+map:open_field          500 ms Minimax                depth=3    nodes=  193,996 time=   500.2 ms
+map:open_field          500 ms Alpha-Beta             depth=6    nodes=  193,349 time=   500.2 ms
+map:open_field          500 ms Heuristic Minimax      depth=3    nodes=  116,172 time=   501.0 ms
+map:open_field          500 ms Heuristic Alpha-Beta   depth=6    nodes=   71,210 time=   500.4 ms
+map:wide_front           50 ms Minimax                depth=2    nodes=   19,288 time=    50.5 ms
+map:wide_front           50 ms Alpha-Beta             depth=4    nodes=   19,808 time=    50.6 ms
+map:wide_front           50 ms Heuristic Minimax      depth=2    nodes=   10,584 time=    50.7 ms
+map:wide_front           50 ms Heuristic Alpha-Beta   depth=5    nodes=    7,451 time=    51.3 ms
+map:wide_front          150 ms Minimax                depth=3    nodes=   55,325 time=   150.5 ms
+map:wide_front          150 ms Alpha-Beta             depth=5    nodes=   57,119 time=   150.4 ms
+map:wide_front          150 ms Heuristic Minimax      depth=2    nodes=   32,856 time=   150.8 ms
+map:wide_front          150 ms Heuristic Alpha-Beta   depth=6    nodes=   22,005 time=   150.3 ms
+map:wide_front          500 ms Minimax                depth=3    nodes=  183,581 time=   500.5 ms
+map:wide_front          500 ms Alpha-Beta             depth=6    nodes=  190,341 time=   500.5 ms
+map:wide_front          500 ms Heuristic Minimax      depth=3    nodes=  112,157 time=   500.5 ms
+map:wide_front          500 ms Heuristic Alpha-Beta   depth=7    nodes=   72,118 time=   501.4 ms
+random 13x13             50 ms Minimax                depth=2    nodes=   12,049 time=    51.3 ms
+random 13x13             50 ms Alpha-Beta             depth=4    nodes=   16,978 time=    50.4 ms
+random 13x13             50 ms Heuristic Minimax      depth=2    nodes=    7,953 time=    50.3 ms
+random 13x13             50 ms Heuristic Alpha-Beta   depth=5    nodes=    6,451 time=    51.6 ms
+random 13x13            150 ms Minimax                depth=2    nodes=   38,929 time=   150.3 ms
+random 13x13            150 ms Alpha-Beta             depth=5    nodes=   51,837 time=   150.2 ms
+random 13x13            150 ms Heuristic Minimax      depth=2    nodes=   21,265 time=   151.5 ms
+random 13x13            150 ms Heuristic Alpha-Beta   depth=5    nodes=   17,715 time=   150.5 ms
+random 13x13            500 ms Minimax                depth=3    nodes=  140,023 time=   500.3 ms
+random 13x13            500 ms Alpha-Beta             depth=6    nodes=  177,601 time=   500.4 ms
+random 13x13            500 ms Heuristic Minimax      depth=3    nodes=   85,239 time=   500.5 ms
+random 13x13            500 ms Heuristic Alpha-Beta   depth=6    nodes=   52,018 time=   500.6 ms
+random 17x17             50 ms Minimax                depth=2    nodes=   15,377 time=    50.3 ms
+random 17x17             50 ms Alpha-Beta             depth=4    nodes=   18,148 time=    50.2 ms
+random 17x17             50 ms Heuristic Minimax      depth=2    nodes=    9,745 time=    50.3 ms
+random 17x17             50 ms Heuristic Alpha-Beta   depth=4    nodes=    7,032 time=    51.3 ms
+random 17x17            150 ms Minimax                depth=3    nodes=   48,638 time=   150.7 ms
+random 17x17            150 ms Alpha-Beta             depth=5    nodes=   54,801 time=   150.5 ms
+random 17x17            150 ms Heuristic Minimax      depth=2    nodes=   29,969 time=   150.8 ms
+random 17x17            150 ms Heuristic Alpha-Beta   depth=5    nodes=   22,681 time=   151.1 ms
+random 17x17            500 ms Minimax                depth=3    nodes=  164,094 time=   500.6 ms
+random 17x17            500 ms Alpha-Beta             depth=6    nodes=  180,141 time=   500.5 ms
+random 17x17            500 ms Heuristic Minimax      depth=3    nodes=  102,142 time=   500.8 ms
+random 17x17            500 ms Heuristic Alpha-Beta   depth=6    nodes=   73,433 time=   501.5 ms
+random 21x21             50 ms Minimax                depth=2    nodes=   15,377 time=    50.5 ms
+random 21x21             50 ms Alpha-Beta             depth=4    nodes=   18,124 time=    50.6 ms
+random 21x21             50 ms Heuristic Minimax      depth=2    nodes=   10,257 time=    50.9 ms
+random 21x21             50 ms Heuristic Alpha-Beta   depth=4    nodes=    6,974 time=    50.8 ms
+random 21x21            150 ms Minimax                depth=3    nodes=   47,199 time=   150.8 ms
+random 21x21            150 ms Alpha-Beta             depth=5    nodes=   54,617 time=   150.4 ms
+random 21x21            150 ms Heuristic Minimax      depth=2    nodes=   30,225 time=   150.6 ms
+random 21x21            150 ms Heuristic Alpha-Beta   depth=5    nodes=   22,723 time=   151.4 ms
+random 21x21            500 ms Minimax                depth=3    nodes=  163,679 time=   500.4 ms
+random 21x21            500 ms Alpha-Beta             depth=6    nodes=  184,393 time=   500.3 ms
+random 21x21            500 ms Heuristic Minimax      depth=3    nodes=  104,543 time=   500.2 ms
+random 21x21            500 ms Heuristic Alpha-Beta   depth=6    nodes=   75,039 time=   501.0 ms
+
+Configuration           Budget  Avg depth  Min  Max  Avg nodes
+Minimax                   50ms       2.00    2    2     15,235
+Minimax                  150ms       2.67    2    3     46,812
+Minimax                  500ms       3.00    3    3    160,009
+Alpha-Beta                50ms       4.00    4    4     17,988
+Alpha-Beta               150ms       5.00    5    5     54,432
+Alpha-Beta               500ms       6.00    6    6    183,923
+Heuristic Minimax         50ms       2.00    2    2      9,219
+Heuristic Minimax        150ms       2.00    2    2     27,246
+Heuristic Minimax        500ms       3.00    3    3     96,137
+Heuristic Alpha-Beta      50ms       4.50    4    5      6,546
+Heuristic Alpha-Beta     150ms       5.08    4    6     19,718
+Heuristic Alpha-Beta     500ms       6.08    5    7     64,426
+CSV : D:\Generic\Coding\introduction_ai\Project\AI_Final_Project\task2_tank_battle\results\depth_budget.csv
+Plot: D:\Generic\Coding\introduction_ai\Project\AI_Final_Project\task2_tank_battle\results\depth_budget.png

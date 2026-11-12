@@ -1,0 +1,13 @@
+config,budget_ms,avg_depth,min_depth,max_depth,avg_nodes,avg_time_ms
+Minimax,50,2,2,2,15235,50.5
+Minimax,150,2.67,2,3,46812,150.5
+Minimax,500,3,3,3,160009,500.5
+Alpha-Beta,50,4,4,4,17988,50.4
+Alpha-Beta,150,5,5,5,54432,150.3
+Alpha-Beta,500,6,6,6,183923,500.4
+Heuristic Minimax,50,2,2,2,9219,50.6
+Heuristic Minimax,150,2,2,2,27246,150.8
+Heuristic Minimax,500,3,3,3,96137,500.7
+Heuristic Alpha-Beta,50,4.5,4,5,6546,51.0
+Heuristic Alpha-Beta,150,5.08,4,6,19718,151.1
+Heuristic Alpha-Beta,500,6.08,5,7,64426,501.1
