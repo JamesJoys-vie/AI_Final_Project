@@ -10,7 +10,7 @@ from collections import deque
 from typing import List, Optional, Tuple
 
 from task1_nqueens.core.board import is_valid_solution
-from task1_nqueens.solvers.min_conflicts import ConflictBoard, MinConflictsSolver
+from task1_nqueens.solvers.min_conflicts import ConflictBoard, MinConflictsSolver, greedy_columns, random_columns
 from task1_nqueens.solvers.variable_selectors import MaxConflictTabuSelector, RandomConflictedSelector
 
 
@@ -116,6 +116,41 @@ class RestartTest(unittest.TestCase):
             result = MinConflictsSolver(selector_cls(), seed=7).solve(500)
             self.assertTrue(result.solved)
             self.assertTrue(is_valid_solution(result.columns))
+
+
+class GreedyInitTest(unittest.TestCase):
+    def test_greedy_columns_is_permutation(self) -> None:
+        rng = random.Random(42)
+        for n in (1, 2, 3, 8, 50, 1000):
+            columns = greedy_columns(n, rng)
+            self.assertEqual(sorted(columns), list(range(n)))
+
+    def test_greedy_starts_closer_than_random(self) -> None:
+        n = 500
+        greedy = [ConflictBoard(greedy_columns(n, random.Random(s))).pairs for s in range(10)]
+        rand = [ConflictBoard(random_columns(n, random.Random(s))).pairs for s in range(10)]
+        self.assertLess(max(greedy), min(rand))
+
+    def test_same_start_board_for_both_strategies(self) -> None:
+        a = MinConflictsSolver(RandomConflictedSelector(), seed=3, init="greedy")
+        b = MinConflictsSolver(MaxConflictTabuSelector(), seed=3, init="greedy")
+        next(a.iter_steps(200), None)
+        next(b.iter_steps(200), None)
+        self.assertEqual(a.initial_pairs, b.initial_pairs)
+
+    def test_greedy_solves(self) -> None:
+        for selector_cls in (RandomConflictedSelector, MaxConflictTabuSelector):
+            for n in (4, 8, 16, 100, 2000):
+                for seed in range(5):
+                    result = MinConflictsSolver(selector_cls(), seed=seed, init="greedy").solve(n)
+                    with self.subTest(selector=selector_cls.name, n=n, seed=seed):
+                        self.assertTrue(result.solved)
+                        self.assertTrue(is_valid_solution(result.columns))
+                        self.assertIn("initial_pairs", result.extra)
+
+    def test_unknown_init_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            MinConflictsSolver(init="smart")
 
 
 if __name__ == "__main__":

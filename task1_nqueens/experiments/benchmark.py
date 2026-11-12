@@ -20,6 +20,7 @@ from task1_nqueens.solvers.variable_selectors import MaxConflictTabuSelector, Ra
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
 SAT_SIZES = (4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 100)
 MC_SIZES = (8, 16, 32, 64, 128, 256, 512, 1000)
+INITS = ("random", "greedy")
 
 
 def write_csv(rows: List[Dict], name: str) -> Path:
@@ -53,32 +54,42 @@ class SatExperiment:
 
 
 class MinConflictsExperiment:
-    def __init__(self, sizes: Sequence[int] = MC_SIZES, runs: int = 20):
+    """Both strategies are run on the same seeds; within one `init` mode, the same seed gives the same start board."""
+
+    def __init__(self, sizes: Sequence[int] = MC_SIZES, runs: int = 20, inits: Sequence[str] = INITS):
         self.sizes = sizes
         self.runs = runs
+        self.inits = inits
         self.selectors = (RandomConflictedSelector, MaxConflictTabuSelector)
 
     def run(self) -> List[Dict]:
         rows = []
-        print(f"{'N':>5}  {'strategy':<34}{'success':>9}{'mean steps':>12}{'median':>9}{'mean ms':>10}")
+        print(f"{'N':>5}  {'init':<7}{'strategy':<34}{'success':>9}{'init pairs':>11}"
+              f"{'mean steps':>12}{'median':>9}{'restarts':>9}{'mean ms':>10}")
         for n in self.sizes:
-            for selector_cls in self.selectors:
-                steps, times, success = [], [], 0
-                for seed in range(self.runs):
-                    result = MinConflictsSolver(selector_cls(), seed=seed).solve(n)
-                    if result.solved and is_valid_solution(result.columns):
-                        success += 1
-                    steps.append(result.steps)
-                    times.append(result.elapsed * 1000)
-                row = {"n": n, "strategy": selector_cls.name, "runs": self.runs,
-                       "success_rate": success / self.runs,
-                       "mean_steps": round(statistics.mean(steps), 1),
-                       "median_steps": statistics.median(steps),
-                       "mean_ms": round(statistics.mean(times), 2),
-                       "stdev_ms": round(statistics.pstdev(times), 2)}
-                rows.append(row)
-                print(f"{n:>5}  {row['strategy']:<34}{row['success_rate']:>8.0%}{row['mean_steps']:>12}"
-                      f"{row['median_steps']:>9}{row['mean_ms']:>10}")
+            for init in self.inits:
+                for selector_cls in self.selectors:
+                    steps, times, initial, restarts, success = [], [], [], [], 0
+                    for seed in range(self.runs):
+                        result = MinConflictsSolver(selector_cls(), seed=seed, init=init).solve(n)
+                        if result.solved and is_valid_solution(result.columns):
+                            success += 1
+                        steps.append(result.steps)
+                        times.append(result.elapsed * 1000)
+                        initial.append(result.extra["initial_pairs"])
+                        restarts.append(result.restarts)
+                    row = {"n": n, "init": init, "strategy": selector_cls.name, "runs": self.runs,
+                           "success_rate": success / self.runs,
+                           "mean_initial_pairs": round(statistics.mean(initial), 1),
+                           "mean_steps": round(statistics.mean(steps), 1),
+                           "median_steps": statistics.median(steps),
+                           "mean_restarts": round(statistics.mean(restarts), 2),
+                           "mean_ms": round(statistics.mean(times), 2),
+                           "stdev_ms": round(statistics.pstdev(times), 2)}
+                    rows.append(row)
+                    print(f"{n:>5}  {init:<7}{row['strategy']:<34}{row['success_rate']:>8.0%}"
+                          f"{row['mean_initial_pairs']:>11}{row['mean_steps']:>12}{row['median_steps']:>9}"
+                          f"{row['mean_restarts']:>9}{row['mean_ms']:>10}")
         return rows
 
 
@@ -96,9 +107,10 @@ def plot(sat_rows: List[Dict], mc_rows: List[Dict]) -> Optional[Path]:
     axes[1].plot([r["n"] for r in sat_rows], [r["encode_ms"] for r in sat_rows], marker="s", label="encode")
     axes[1].set_title("Glucose3 time (ms)")
     axes[1].legend()
-    for strategy in sorted({r["strategy"] for r in mc_rows}):
-        data = [r for r in mc_rows if r["strategy"] == strategy]
-        axes[2].plot([r["n"] for r in data], [r["mean_steps"] for r in data], marker="o", label=strategy)
+    for init, strategy in sorted({(r["init"], r["strategy"]) for r in mc_rows}):
+        data = [r for r in mc_rows if r["strategy"] == strategy and r["init"] == init]
+        axes[2].plot([r["n"] for r in data], [r["mean_steps"] for r in data],
+                     marker="o", linestyle="-" if init == "random" else "--", label=f"{strategy}, {init} init")
     axes[2].set_title("Min-Conflicts mean steps")
     axes[2].legend(fontsize=8)
     for ax in axes:
@@ -117,9 +129,12 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     parser.add_argument("--runs", type=int, default=20, help="Min-Conflicts runs per N and strategy")
     parser.add_argument("--sat-max", type=int, default=100)
     parser.add_argument("--mc-max", type=int, default=1000)
+    parser.add_argument("--init", choices=("random", "greedy", "both"), default="both",
+                        help="Min-Conflicts initial assignment (default: run both)")
     args = parser.parse_args(argv)
+    inits = INITS if args.init == "both" else (args.init,)
     sat_rows = SatExperiment([n for n in SAT_SIZES if n <= args.sat_max]).run()
-    mc_rows = MinConflictsExperiment([n for n in MC_SIZES if n <= args.mc_max], args.runs).run()
+    mc_rows = MinConflictsExperiment([n for n in MC_SIZES if n <= args.mc_max], args.runs, inits).run()
     print("CSV :", write_csv(sat_rows, "sat_glucose3.csv"), write_csv(mc_rows, "min_conflicts.csv"))
     print("Plot:", plot(sat_rows, mc_rows))
 
