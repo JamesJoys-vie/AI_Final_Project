@@ -1,0 +1,65 @@
+scenario,config,action,algorithm,depth_cycles,depth_plies,nodes_generated,leaves_evaluated,prunings,time_ms,ebf,value
+opening,Minimax,STAY,Minimax,1,2,36,36,0,0.417,6.0,0.0
+opening,Alpha-Beta,STAY,Alpha-Beta,1,2,11,11,5,0.111,3.317,0.0
+opening,Heuristic Minimax,MOVE_UP,Minimax,1,2,36,36,0,0.537,6.0,0.0
+opening,Heuristic Alpha-Beta,MOVE_UP,Alpha-Beta,1,2,11,11,5,0.213,3.317,0.0
+opening,Minimax,STAY,Minimax,2,4,1261,1225,0,12.187,5.959,0.0
+opening,Alpha-Beta,STAY,Alpha-Beta,2,4,80,69,44,0.717,2.991,0.0
+opening,Heuristic Minimax,MOVE_UP,Minimax,2,4,1261,1225,0,18.533,5.959,0.0
+opening,Heuristic Alpha-Beta,MOVE_UP,Alpha-Beta,2,4,80,69,44,1.902,2.991,0.0
+opening,Minimax,STAY,Minimax,3,6,42470,41209,0,451.541,5.907,0.0
+opening,Alpha-Beta,STAY,Alpha-Beta,3,6,485,405,280,5.139,2.803,0.0
+opening,Heuristic Minimax,MOVE_UP,Minimax,3,6,42470,41209,0,722.7,5.907,0.0
+opening,Heuristic Alpha-Beta,MOVE_UP,Alpha-Beta,3,6,485,405,280,10.29,2.803,0.0
+opening,Minimax,STAY,Minimax,4,8,1430154,1387684,0,16658.352,5.881,0.0
+opening,Alpha-Beta,STAY,Alpha-Beta,4,8,2840,2355,1659,23.515,2.702,0.0
+opening,Heuristic Minimax,MOVE_UP,Minimax,4,8,1430154,1387684,0,20003.287,5.881,0.0
+opening,Heuristic Alpha-Beta,MOVE_UP,Alpha-Beta,4,8,2840,2355,1659,59.979,2.702,0.0
+duel,Minimax,STAY,Minimax,1,2,36,36,0,0.564,6.0,0.0
+duel,Alpha-Beta,STAY,Alpha-Beta,1,2,11,11,5,0.153,3.317,0.0
+duel,Heuristic Minimax,FIRE,Minimax,1,2,36,36,0,0.694,6.0,233.33
+duel,Heuristic Alpha-Beta,FIRE,Alpha-Beta,1,2,11,11,5,0.418,3.317,233.33
+duel,Minimax,STAY,Minimax,2,4,1273,1237,0,12.379,5.973,0.0
+duel,Alpha-Beta,STAY,Alpha-Beta,2,4,80,69,44,0.736,2.991,0.0
+duel,Heuristic Minimax,FIRE,Minimax,2,4,1273,1237,0,29.216,5.973,233.33
+duel,Heuristic Alpha-Beta,FIRE,Alpha-Beta,2,4,88,77,43,2.36,3.063,233.33
+duel,Minimax,STAY,Minimax,3,6,43370,42097,0,452.332,5.927,0.0
+duel,Alpha-Beta,STAY,Alpha-Beta,3,6,493,413,283,4.138,2.811,0.0
+duel,Heuristic Minimax,FIRE,Minimax,3,6,43370,42097,0,762.228,5.927,233.33
+duel,Heuristic Alpha-Beta,FIRE,Alpha-Beta,3,6,576,488,302,14.5,2.884,233.33
+duel,Minimax,STAY,Minimax,4,8,1513473,1470103,0,15293.55,5.922,0.0
+duel,Alpha-Beta,STAY,Alpha-Beta,4,8,2945,2452,1706,32.071,2.714,0.0
+duel,Heuristic Minimax,FIRE,Minimax,4,8,1513473,1470103,0,24630.283,5.922,233.33
+duel,Heuristic Alpha-Beta,FIRE,Alpha-Beta,4,8,3614,3034,1928,89.642,2.785,233.33
+siege,Minimax,STAY,Minimax,1,2,36,36,0,0.311,6.0,0.0
+siege,Alpha-Beta,STAY,Alpha-Beta,1,2,11,11,5,0.091,3.317,0.0
+siege,Heuristic Minimax,MOVE_RIGHT,Minimax,1,2,36,36,0,0.638,6.0,-233.33
+siege,Heuristic Alpha-Beta,MOVE_RIGHT,Alpha-Beta,1,2,11,11,5,0.337,3.317,-233.33
+siege,Minimax,STAY,Minimax,2,4,1332,1296,0,16.022,6.041,0.0
+siege,Alpha-Beta,STAY,Alpha-Beta,2,4,82,71,45,1.216,3.009,0.0
+siege,Heuristic Minimax,MOVE_RIGHT,Minimax,2,4,1332,1296,0,16.457,6.041,-233.33
+siege,Heuristic Alpha-Beta,MOVE_RIGHT,Alpha-Beta,2,4,82,71,45,1.511,3.009,-233.33
+siege,Minimax,STAY,Minimax,3,6,47128,45796,0,412.798,6.01,0.0
+siege,Alpha-Beta,STAY,Alpha-Beta,3,6,509,427,293,4.3,2.826,0.0
+siege,Heuristic Minimax,MOVE_RIGHT,Minimax,3,6,47128,45796,0,620.223,6.01,-233.33
+siege,Heuristic Alpha-Beta,MOVE_RIGHT,Alpha-Beta,3,6,509,427,293,10.165,2.826,-233.33
+siege,Minimax,STAY,Minimax,4,8,1657489,1610361,0,15030.054,5.99,0.0
+siege,Alpha-Beta,STAY,Alpha-Beta,4,8,3046,2537,1774,27.869,2.726,0.0
+siege,Heuristic Minimax,MOVE_RIGHT,Minimax,4,8,1657489,1610361,0,20948.127,5.99,-233.33
+siege,Heuristic Alpha-Beta,MOVE_RIGHT,Alpha-Beta,4,8,3046,2537,1774,67.999,2.726,-233.33
+bullets,Minimax,MOVE_UP,Minimax,1,2,25,25,0,0.462,5.0,0.0
+bullets,Alpha-Beta,MOVE_UP,Alpha-Beta,1,2,9,9,4,0.173,3.0,0.0
+bullets,Heuristic Minimax,MOVE_LEFT,Minimax,1,2,25,25,0,0.763,5.0,-121.92
+bullets,Heuristic Alpha-Beta,MOVE_LEFT,Alpha-Beta,1,2,16,16,3,0.564,4.0,-121.92
+bullets,Minimax,MOVE_UP,Minimax,2,4,742,717,0,10.378,5.219,0.0
+bullets,Alpha-Beta,MOVE_UP,Alpha-Beta,2,4,63,54,32,0.972,2.817,0.0
+bullets,Heuristic Minimax,MOVE_LEFT,Minimax,2,4,742,717,0,17.711,5.219,-140.67
+bullets,Heuristic Alpha-Beta,MOVE_LEFT,Alpha-Beta,2,4,242,220,70,7.445,3.944,-140.67
+bullets,Minimax,MOVE_UP,Minimax,3,6,24161,23419,0,301.021,5.377,0.0
+bullets,Alpha-Beta,MOVE_UP,Alpha-Beta,3,6,365,302,185,5.536,2.673,0.0
+bullets,Heuristic Minimax,MOVE_LEFT,Minimax,3,6,24161,23419,0,493.748,5.377,-140.67
+bullets,Heuristic Alpha-Beta,MOVE_LEFT,Alpha-Beta,3,6,1529,1319,578,45.12,3.394,-140.67
+bullets,Minimax,MOVE_UP,Minimax,4,8,787030,762869,0,8597.84,5.458,0.0
+bullets,Alpha-Beta,MOVE_UP,Alpha-Beta,4,8,2058,1693,987,28.915,2.595,0.0
+bullets,Heuristic Minimax,MOVE_LEFT,Minimax,4,8,787030,762869,0,13395.818,5.458,-146.67
+bullets,Heuristic Alpha-Beta,MOVE_LEFT,Alpha-Beta,4,8,10635,8939,4255,244.599,3.187,-146.67

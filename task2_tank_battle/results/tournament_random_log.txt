@@ -1,0 +1,39 @@
+#001 Random symmetric Minimax                  vs Alpha-Beta               -> Draw           (120 turns)
+#002 Random symmetric Alpha-Beta               vs Minimax                  -> Draw           (120 turns)
+#003 Random symmetric Minimax                  vs Heuristic Minimax        -> Player 2 wins  (22 turns)
+#004 Random symmetric Heuristic Minimax        vs Minimax                  -> Draw           (120 turns)
+#005 Random symmetric Minimax                  vs Heuristic Alpha-Beta     -> Player 2 wins  (23 turns)
+#006 Random symmetric Heuristic Alpha-Beta     vs Minimax                  -> Player 1 wins  (23 turns)
+#007 Random symmetric Minimax                  vs Random                   -> Draw           (120 turns)
+#008 Random symmetric Random                   vs Minimax                  -> Draw           (120 turns)
+#009 Random symmetric Minimax                  vs Greedy Hunter [plugin]   -> Player 2 wins  (24 turns)
+#010 Random symmetric Greedy Hunter [plugin]   vs Minimax                  -> Player 1 wins  (24 turns)
+#011 Random symmetric Alpha-Beta               vs Heuristic Minimax        -> Player 2 wins  (25 turns)
+#012 Random symmetric Heuristic Minimax        vs Alpha-Beta               -> Player 1 wins  (22 turns)
+#013 Random symmetric Alpha-Beta               vs Heuristic Alpha-Beta     -> Player 2 wins  (22 turns)
+#014 Random symmetric Heuristic Alpha-Beta     vs Alpha-Beta               -> Player 1 wins  (23 turns)
+#015 Random symmetric Alpha-Beta               vs Random                   -> Draw           (120 turns)
+#016 Random symmetric Random                   vs Alpha-Beta               -> Draw           (120 turns)
+#017 Random symmetric Alpha-Beta               vs Greedy Hunter [plugin]   -> Player 2 wins  (24 turns)
+#018 Random symmetric Greedy Hunter [plugin]   vs Alpha-Beta               -> Player 1 wins  (24 turns)
+#019 Random symmetric Heuristic Minimax        vs Heuristic Alpha-Beta     -> Draw           (15 turns)
+#020 Random symmetric Heuristic Alpha-Beta     vs Heuristic Minimax        -> Draw           (15 turns)
+#021 Random symmetric Heuristic Minimax        vs Random                   -> Player 1 wins  (24 turns)
+#022 Random symmetric Random                   vs Heuristic Minimax        -> Player 2 wins  (22 turns)
+#023 Random symmetric Heuristic Minimax        vs Greedy Hunter [plugin]   -> Player 1 wins  (17 turns)
+#024 Random symmetric Greedy Hunter [plugin]   vs Heuristic Minimax        -> Player 2 wins  (17 turns)
+#025 Random symmetric Heuristic Alpha-Beta     vs Random                   -> Player 1 wins  (22 turns)
+#026 Random symmetric Random                   vs Heuristic Alpha-Beta     -> Player 2 wins  (22 turns)
+#027 Random symmetric Heuristic Alpha-Beta     vs Greedy Hunter [plugin]   -> Player 1 wins  (17 turns)
+#028 Random symmetric Greedy Hunter [plugin]   vs Heuristic Alpha-Beta     -> Player 2 wins  (17 turns)
+#029 Random symmetric Random                   vs Greedy Hunter [plugin]   -> Player 2 wins  (24 turns)
+#030 Random symmetric Greedy Hunter [plugin]   vs Random                   -> Player 1 wins  (28 turns)
+
+Rank Agent                        P   W   D   L  Pts   ms/move
+1    Heuristic Alpha-Beta        10   8   2   0   26      83.2
+2    Heuristic Minimax           10   7   3   0   24      98.2
+3    Greedy Hunter [plugin]      10   6   0   4   18       0.0
+4    Minimax                     10   0   5   5    5      96.7
+5    Alpha-Beta                  10   0   4   6    4      34.3
+6    Random                      10   0   4   6    4       0.0
+CSV: task2_tank_battle\results\tournament_random_matches.csv
