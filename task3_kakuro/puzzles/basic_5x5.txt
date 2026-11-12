@@ -1,0 +1,7 @@
+; Example board from the project description (5 x 5).
+; X = block, . = white cell, D\R = clue (D = down sum, R = right/across sum).
+X      X      21\    14\    X
+X      14\12  .      .      11\
+\21    .      .      .      .
+\11    .      .      .      .
+X      \16    .      .      X
