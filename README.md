@@ -224,7 +224,7 @@ replies, then both are applied simultaneously.
 | Minimax | Minimax | Terminal utility only |
 | Alpha-Beta | Alpha-Beta pruning | Terminal utility only |
 | Heuristic Minimax | Minimax | Heuristic `EVAL(s)` |
-| Heuristic Alpha-Beta | Alpha-Beta + move ordering | Heuristic `EVAL(s)` |
+| Heuristic Alpha-Beta | Alpha-Beta + move ordering, killer moves, transposition table, internal iterative deepening | Heuristic `EVAL(s)` |
 
 The heuristic `EVAL(s)` is a weighted sum of five features, all from MAX's point of view:
 progress toward destroying the closer enemy target, total damage dealt vs. received,
@@ -240,6 +240,29 @@ ordered once instead of once per MAX action. The tests check against a frozen co
 state and `EVAL(s)` value is unchanged, and the benchmark explores exactly the same nodes as before; only the time
 changes: **2.0–2.6× more nodes per second** for all four configurations (see `results/baseline/` vs `results/phase2/`).
 
+**Search enhancements (Heuristic Alpha-Beta).** Alpha-Beta prunes only as well as its move ordering, so the
+heuristic configuration adds the classic enhancements on top of the static ordering. Plain Minimax and
+Alpha-Beta stay textbook.
+- *Killer moves and countermoves:* an action that caused a cut-off is tried first in sibling nodes at the same ply.
+  At MIN nodes the reply that refuted the same MAX action comes first.
+- *Transposition table:* stores each searched state's value with a bound flag (exact / lower / upper) and its best
+  action. The turn is part of the key, so within one search a state is always reached at the same remaining depth;
+  bound entries are used only for cut-offs. The root value therefore stays exactly the Minimax value (tested).
+- *Internal iterative deepening:* depths 1 … d−1 are searched first, so the table and killers order depth d well.
+  With a time budget, the agent's own iterative deepening keeps the table between depths and searches the
+  previous best action first.
+
+Each enhancement can be switched on separately (`--ablation` in the benchmark). Summed over the 4 benchmark
+scenarios at depth 4:
+
+| Heuristic Alpha-Beta variant | Nodes | Time |
+|------------------------------|------:|-----:|
+| No move ordering | 102,280 | 634 ms |
+| + static move ordering | 20,135 | 214 ms |
+| + killer moves / countermoves | 18,059 | 192 ms |
+| + transposition table | 12,617 | 138 ms |
+| + internal iterative deepening (final) | 10,406 | 116 ms |
+
 ### Usage
 
 ```bash
@@ -250,7 +273,7 @@ python -m task2_tank_battle tournament                       # round-robin tourn
 ```
 
 Benchmark options: `--depths`, `--minimax-max-depth`, `--repeats` (times are medians; searches slower
-than 1 s run once), `--seed`, `--output`, `--no-plot`.
+than 1 s run once), `--configs`, `--ablation`, `--seed`, `--output`, `--no-plot`.
 Tournament options: `--agents`, `--maps`, `--depth`, `--time-limit`, `--max-turns`, `--seed`, `--output`.
 
 ### Tests
@@ -264,8 +287,10 @@ The tests cover:
   movement conflicts, terminal states and utility.
 - **Reference engine:** `step()` and the heuristic `EVAL(s)` give exactly the same results as a frozen copy of
   the original code (`tests/reference_impl.py`) on 300 sampled states and all 36 joint actions.
-- **Search:** Alpha-Beta (with and without move ordering) returns the Minimax value on sampled states; every
-  configuration takes a win in one and dodges a lethal shot; iterative deepening respects its time budget.
+- **Search:** Alpha-Beta with every combination of enhancements returns the Minimax value on sampled states;
+  bound entries of the transposition table are never used as exact values, also when the table is kept between
+  iterative-deepening depths; the previous best action is searched first; every configuration takes a win in one
+  and dodges a lethal shot; iterative deepening respects its time budget.
 
 ### GUI controls
 
