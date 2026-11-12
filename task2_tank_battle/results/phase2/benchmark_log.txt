@@ -1,0 +1,66 @@
+opening  d=1 Minimax                STAY       nodes=       36 time=       0.1 ms nodes/s=  320,000 prunes=      0 ebf=6.00 value=0.0
+opening  d=1 Alpha-Beta             STAY       nodes=       11 time=       0.0 ms nodes/s=  343,750 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 Heuristic Minimax      MOVE_UP    nodes=       36 time=       0.2 ms nodes/s=  150,691 prunes=      0 ebf=6.00 value=0.0
+opening  d=1 Heuristic Alpha-Beta   MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  151,307 prunes=      5 ebf=3.32 value=0.0
+opening  d=2 Minimax                STAY       nodes=    1,261 time=       4.9 ms nodes/s=  258,614 prunes=      0 ebf=5.96 value=0.0
+opening  d=2 Alpha-Beta             STAY       nodes=       80 time=       0.2 ms nodes/s=  327,332 prunes=     44 ebf=2.99 value=0.0
+opening  d=2 Heuristic Minimax      MOVE_UP    nodes=    1,261 time=       7.8 ms nodes/s=  162,561 prunes=      0 ebf=5.96 value=0.0
+opening  d=2 Heuristic Alpha-Beta   MOVE_UP    nodes=       80 time=       0.5 ms nodes/s=  163,867 prunes=     44 ebf=2.99 value=0.0
+opening  d=3 Minimax                STAY       nodes=   42,470 time=     154.1 ms nodes/s=  275,557 prunes=      0 ebf=5.91 value=0.0
+opening  d=3 Alpha-Beta             STAY       nodes=      485 time=       1.5 ms nodes/s=  333,219 prunes=    280 ebf=2.80 value=0.0
+opening  d=3 Heuristic Minimax      MOVE_UP    nodes=   42,470 time=     249.0 ms nodes/s=  170,588 prunes=      0 ebf=5.91 value=0.0
+opening  d=3 Heuristic Alpha-Beta   MOVE_UP    nodes=      485 time=       2.9 ms nodes/s=  165,039 prunes=    280 ebf=2.80 value=0.0
+opening  d=4 Minimax                STAY       nodes=1,430,154 time=    5098.7 ms nodes/s=  280,494 prunes=      0 ebf=5.88 value=0.0
+opening  d=4 Alpha-Beta             STAY       nodes=    2,840 time=       8.4 ms nodes/s=  339,640 prunes=  1,659 ebf=2.70 value=0.0
+opening  d=4 Heuristic Minimax      MOVE_UP    nodes=1,430,154 time=    7585.2 ms nodes/s=  188,544 prunes=      0 ebf=5.88 value=0.0
+opening  d=4 Heuristic Alpha-Beta   MOVE_UP    nodes=    2,840 time=      16.6 ms nodes/s=  171,548 prunes=  1,659 ebf=2.70 value=0.0
+duel     d=1 Minimax                STAY       nodes=       36 time=       0.1 ms nodes/s=  313,589 prunes=      0 ebf=6.00 value=0.0
+duel     d=1 Alpha-Beta             STAY       nodes=       11 time=       0.0 ms nodes/s=  334,346 prunes=      5 ebf=3.32 value=0.0
+duel     d=1 Heuristic Minimax      FIRE       nodes=       36 time=       0.3 ms nodes/s=  133,333 prunes=      0 ebf=6.00 value=233.33
+duel     d=1 Heuristic Alpha-Beta   FIRE       nodes=       11 time=       0.1 ms nodes/s=   73,776 prunes=      5 ebf=3.32 value=233.33
+duel     d=2 Minimax                STAY       nodes=    1,273 time=       4.5 ms nodes/s=  282,318 prunes=      0 ebf=5.97 value=0.0
+duel     d=2 Alpha-Beta             STAY       nodes=       80 time=       0.3 ms nodes/s=  303,260 prunes=     44 ebf=2.99 value=0.0
+duel     d=2 Heuristic Minimax      FIRE       nodes=    1,273 time=       9.5 ms nodes/s=  133,517 prunes=      0 ebf=5.97 value=233.33
+duel     d=2 Heuristic Alpha-Beta   FIRE       nodes=       88 time=       1.1 ms nodes/s=   81,218 prunes=     43 ebf=3.06 value=233.33
+duel     d=3 Minimax                STAY       nodes=   43,370 time=     152.2 ms nodes/s=  284,995 prunes=      0 ebf=5.93 value=0.0
+duel     d=3 Alpha-Beta             STAY       nodes=      493 time=       1.4 ms nodes/s=  345,650 prunes=    283 ebf=2.81 value=0.0
+duel     d=3 Heuristic Minimax      FIRE       nodes=   43,370 time=     307.8 ms nodes/s=  140,891 prunes=      0 ebf=5.93 value=233.33
+duel     d=3 Heuristic Alpha-Beta   FIRE       nodes=      576 time=       6.6 ms nodes/s=   87,203 prunes=    302 ebf=2.88 value=233.33
+duel     d=4 Minimax                STAY       nodes=1,513,473 time=    4870.2 ms nodes/s=  310,760 prunes=      0 ebf=5.92 value=0.0
+duel     d=4 Alpha-Beta             STAY       nodes=    2,945 time=       8.3 ms nodes/s=  352,699 prunes=  1,706 ebf=2.71 value=0.0
+duel     d=4 Heuristic Minimax      FIRE       nodes=1,513,473 time=    9931.0 ms nodes/s=  152,399 prunes=      0 ebf=5.92 value=233.33
+duel     d=4 Heuristic Alpha-Beta   FIRE       nodes=    3,614 time=      40.1 ms nodes/s=   90,180 prunes=  1,928 ebf=2.79 value=233.33
+siege    d=1 Minimax                STAY       nodes=       36 time=       0.1 ms nodes/s=  363,636 prunes=      0 ebf=6.00 value=0.0
+siege    d=1 Alpha-Beta             STAY       nodes=       11 time=       0.0 ms nodes/s=  383,275 prunes=      5 ebf=3.32 value=0.0
+siege    d=1 Heuristic Minimax      MOVE_RIGHT nodes=       36 time=       0.2 ms nodes/s=  165,138 prunes=      0 ebf=6.00 value=-233.33
+siege    d=1 Heuristic Alpha-Beta   MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=  145,119 prunes=      5 ebf=3.32 value=-233.33
+siege    d=2 Minimax                STAY       nodes=    1,332 time=       3.7 ms nodes/s=  357,978 prunes=      0 ebf=6.04 value=0.0
+siege    d=2 Alpha-Beta             STAY       nodes=       82 time=       0.2 ms nodes/s=  377,880 prunes=     45 ebf=3.01 value=0.0
+siege    d=2 Heuristic Minimax      MOVE_RIGHT nodes=    1,332 time=       6.1 ms nodes/s=  217,111 prunes=      0 ebf=6.04 value=-233.33
+siege    d=2 Heuristic Alpha-Beta   MOVE_RIGHT nodes=       82 time=       0.5 ms nodes/s=  157,480 prunes=     45 ebf=3.01 value=-233.33
+siege    d=3 Minimax                STAY       nodes=   47,128 time=     138.0 ms nodes/s=  341,463 prunes=      0 ebf=6.01 value=0.0
+siege    d=3 Alpha-Beta             STAY       nodes=      509 time=       1.4 ms nodes/s=  373,743 prunes=    293 ebf=2.83 value=0.0
+siege    d=3 Heuristic Minimax      MOVE_RIGHT nodes=   47,128 time=     230.7 ms nodes/s=  204,320 prunes=      0 ebf=6.01 value=-233.33
+siege    d=3 Heuristic Alpha-Beta   MOVE_RIGHT nodes=      509 time=       3.1 ms nodes/s=  164,890 prunes=    293 ebf=2.83 value=-233.33
+siege    d=4 Minimax                STAY       nodes=1,657,489 time=    4900.8 ms nodes/s=  338,211 prunes=      0 ebf=5.99 value=0.0
+siege    d=4 Alpha-Beta             STAY       nodes=    3,046 time=       8.0 ms nodes/s=  379,233 prunes=  1,774 ebf=2.73 value=0.0
+siege    d=4 Heuristic Minimax      MOVE_RIGHT nodes=1,657,489 time=    8323.9 ms nodes/s=  199,125 prunes=      0 ebf=5.99 value=-233.33
+siege    d=4 Heuristic Alpha-Beta   MOVE_RIGHT nodes=    3,046 time=      24.6 ms nodes/s=  123,699 prunes=  1,774 ebf=2.73 value=-233.33
+bullets  d=1 Minimax                MOVE_UP    nodes=       25 time=       0.2 ms nodes/s=  133,618 prunes=      0 ebf=5.00 value=0.0
+bullets  d=1 Alpha-Beta             MOVE_UP    nodes=        9 time=       0.1 ms nodes/s=  121,131 prunes=      4 ebf=3.00 value=0.0
+bullets  d=1 Heuristic Minimax      MOVE_LEFT  nodes=       25 time=       0.4 ms nodes/s=   69,560 prunes=      0 ebf=5.00 value=-121.92
+bullets  d=1 Heuristic Alpha-Beta   MOVE_LEFT  nodes=       16 time=       0.2 ms nodes/s=   64,516 prunes=      3 ebf=4.00 value=-121.92
+bullets  d=2 Minimax                MOVE_UP    nodes=      742 time=       4.4 ms nodes/s=  169,032 prunes=      0 ebf=5.22 value=0.0
+bullets  d=2 Alpha-Beta             MOVE_UP    nodes=       63 time=       0.4 ms nodes/s=  146,853 prunes=     32 ebf=2.82 value=0.0
+bullets  d=2 Heuristic Minimax      MOVE_LEFT  nodes=      742 time=       8.0 ms nodes/s=   93,138 prunes=      0 ebf=5.22 value=-140.67
+bullets  d=2 Heuristic Alpha-Beta   MOVE_LEFT  nodes=      242 time=       3.1 ms nodes/s=   77,193 prunes=     70 ebf=3.94 value=-140.67
+bullets  d=3 Minimax                MOVE_UP    nodes=   24,161 time=     107.0 ms nodes/s=  225,878 prunes=      0 ebf=5.38 value=0.0
+bullets  d=3 Alpha-Beta             MOVE_UP    nodes=      365 time=       2.0 ms nodes/s=  180,523 prunes=    185 ebf=2.67 value=0.0
+bullets  d=3 Heuristic Minimax      MOVE_LEFT  nodes=   24,161 time=     206.6 ms nodes/s=  116,924 prunes=      0 ebf=5.38 value=-140.67
+bullets  d=3 Heuristic Alpha-Beta   MOVE_LEFT  nodes=    1,529 time=      18.0 ms nodes/s=   84,776 prunes=    578 ebf=3.39 value=-140.67
+bullets  d=4 Minimax                MOVE_UP    nodes=  787,030 time=    3069.8 ms nodes/s=  256,381 prunes=      0 ebf=5.46 value=0.0
+bullets  d=4 Alpha-Beta             MOVE_UP    nodes=    2,058 time=       8.9 ms nodes/s=  230,480 prunes=    987 ebf=2.60 value=0.0
+bullets  d=4 Heuristic Minimax      MOVE_LEFT  nodes=  787,030 time=    5740.7 ms nodes/s=  137,095 prunes=      0 ebf=5.46 value=-146.67
+bullets  d=4 Heuristic Alpha-Beta   MOVE_LEFT  nodes=   10,635 time=     114.7 ms nodes/s=   92,700 prunes=  4,255 ebf=3.19 value=-146.67
+CSV : task2_tank_battle\results\phase2\search_benchmark.csv
+Plot: task2_tank_battle\results\phase2\search_benchmark.png
