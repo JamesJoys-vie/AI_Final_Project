@@ -1,6 +1,6 @@
 """
 Experiments of Task 1.
-(a) Glucose3: number of CNF clauses and running time for increasing N (N >= 4).
+(a) Glucose3: number of CNF clauses and running time for increasing N (N >= 4), per CNF encoding.
 (b) Min-Conflicts: standard vs proposed heuristic, same N, same seeds (=> same initial boards).
 """
 from __future__ import annotations
@@ -21,6 +21,13 @@ RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
 SAT_SIZES = (4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 100)
 MC_SIZES = (8, 16, 32, 64, 128, 256, 512, 1000)
 INITS = ("random", "greedy")
+SAT_ENCODINGS = {  # name -> (at-most-one encoding, redundant column ALO)
+    "pairwise": ("pairwise", False),
+    "pairwise+alo": ("pairwise", True),
+    "seqcounter": ("seqcounter", False),
+    "seqcounter+alo": ("seqcounter", True),
+}
+DEFAULT_SAT_ENCODINGS = ("pairwise", "pairwise+alo", "seqcounter+alo")
 
 
 def write_csv(rows: List[Dict], name: str) -> Path:
@@ -34,22 +41,37 @@ def write_csv(rows: List[Dict], name: str) -> Path:
 
 
 class SatExperiment:
-    def __init__(self, sizes: Sequence[int] = SAT_SIZES):
+    """
+    Each encoding is (at-most-one encoding, column ALO). `solve_ms` = load + search, as before;
+    seqcounter without column ALO is not in the default set because its search time explodes (minutes at N=100).
+    """
+
+    def __init__(self, sizes: Sequence[int] = SAT_SIZES, encodings: Sequence[str] = DEFAULT_SAT_ENCODINGS):
         self.sizes = sizes
+        self.encodings = encodings
 
     def run(self) -> List[Dict]:
         rows = []
-        solver = SatNQueensSolver()
-        print(f"{'N':>5}{'variables':>11}{'clauses':>12}{'encode ms':>12}{'solve ms':>12}  valid")
+        print(f"{'N':>5}  {'encoding':<16}{'variables':>10}{'clauses':>12}{'encode ms':>11}"
+              f"{'load ms':>10}{'search ms':>11}{'solve ms':>11}  valid")
         for n in self.sizes:
-            result = solver.solve(n)
-            assert result.clauses == NQueensCnfEncoder.expected_clause_count(n)
-            valid = is_valid_solution(result.columns)
-            rows.append({"n": n, "variables": result.variables, "clauses": result.clauses,
-                         "encode_ms": round(result.extra["encode_time"] * 1000, 3),
-                         "solve_ms": round(result.elapsed * 1000, 3), "valid": valid})
-            print(f"{n:>5}{result.variables:>11,}{result.clauses:>12,}"
-                  f"{rows[-1]['encode_ms']:>12.2f}{rows[-1]['solve_ms']:>12.2f}  {valid}")
+            for encoding in self.encodings:
+                amo, column_alo = SAT_ENCODINGS[encoding]
+                result = SatNQueensSolver(amo, column_alo).solve(n)
+                assert result.clauses == NQueensCnfEncoder(n, amo, column_alo).clause_count()
+                if encoding == "pairwise":
+                    assert result.clauses == NQueensCnfEncoder.expected_clause_count(n)
+                valid = is_valid_solution(result.columns)
+                extra = result.extra
+                rows.append({"n": n, "encoding": encoding, "variables": result.variables,
+                             "clauses": result.clauses,
+                             "encode_ms": round(extra["encode_time"] * 1000, 3),
+                             "load_ms": round(extra["load_time"] * 1000, 3),
+                             "search_ms": round(extra["search_time"] * 1000, 3),
+                             "solve_ms": round(result.elapsed * 1000, 3), "valid": valid})
+                row = rows[-1]
+                print(f"{n:>5}  {encoding:<16}{result.variables:>10,}{result.clauses:>12,}{row['encode_ms']:>11.2f}"
+                      f"{row['load_ms']:>10.2f}{row['search_ms']:>11.2f}{row['solve_ms']:>11.2f}  {valid}")
         return rows
 
 
@@ -101,12 +123,15 @@ def plot(sat_rows: List[Dict], mc_rows: List[Dict]) -> Optional[Path]:
     except ImportError:
         return None
     fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-    axes[0].plot([r["n"] for r in sat_rows], [r["clauses"] for r in sat_rows], marker="o")
+    for encoding in dict.fromkeys(r["encoding"] for r in sat_rows):
+        data = [r for r in sat_rows if r["encoding"] == encoding]
+        ns = [r["n"] for r in data]
+        axes[0].plot(ns, [r["clauses"] for r in data], marker="o", label=encoding)
+        axes[1].plot(ns, [r["encode_ms"] + r["solve_ms"] for r in data], marker="o", label=encoding)
     axes[0].set_title("CNF clauses vs N")
-    axes[1].plot([r["n"] for r in sat_rows], [r["solve_ms"] for r in sat_rows], marker="o", label="solve")
-    axes[1].plot([r["n"] for r in sat_rows], [r["encode_ms"] for r in sat_rows], marker="s", label="encode")
-    axes[1].set_title("Glucose3 time (ms)")
-    axes[1].legend()
+    axes[0].legend(fontsize=8)
+    axes[1].set_title("Glucose3 encode + solve time (ms)")
+    axes[1].legend(fontsize=8)
     for init, strategy in sorted({(r["init"], r["strategy"]) for r in mc_rows}):
         data = [r for r in mc_rows if r["strategy"] == strategy and r["init"] == init]
         axes[2].plot([r["n"] for r in data], [r["mean_steps"] for r in data],
@@ -131,9 +156,11 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     parser.add_argument("--mc-max", type=int, default=1000)
     parser.add_argument("--init", choices=("random", "greedy", "both"), default="both",
                         help="Min-Conflicts initial assignment (default: run both)")
+    parser.add_argument("--sat-encodings", nargs="+", choices=tuple(SAT_ENCODINGS), default=DEFAULT_SAT_ENCODINGS,
+                        help="CNF encodings to compare (default: pairwise pairwise+alo seqcounter+alo)")
     args = parser.parse_args(argv)
     inits = INITS if args.init == "both" else (args.init,)
-    sat_rows = SatExperiment([n for n in SAT_SIZES if n <= args.sat_max]).run()
+    sat_rows = SatExperiment([n for n in SAT_SIZES if n <= args.sat_max], args.sat_encodings).run()
     mc_rows = MinConflictsExperiment([n for n in MC_SIZES if n <= args.mc_max], args.runs, inits).run()
     print("CSV :", write_csv(sat_rows, "sat_glucose3.csv"), write_csv(mc_rows, "min_conflicts.csv"))
     print("Plot:", plot(sat_rows, mc_rows))
