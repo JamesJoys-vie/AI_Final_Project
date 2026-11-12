@@ -1,0 +1,7 @@
+rank,agent,played,wins,draws,losses,points,avg_ms_per_move
+1,Heuristic Alpha-Beta,20,15,5,0,50,78.0
+2,Heuristic Minimax,20,12,7,1,43,97.8
+3,Greedy Hunter [plugin],20,12,4,4,40,0.0
+4,Minimax,20,0,9,11,9,96.3
+5,Alpha-Beta,20,0,9,11,9,33.9
+6,Random,20,0,8,12,8,0.0
