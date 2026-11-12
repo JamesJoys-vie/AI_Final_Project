@@ -11,6 +11,10 @@ from __future__ import annotations
 
 import sys
 from typing import List, Optional, Sequence
+from pathlib import Path
+
+if __package__ in (None, ""):  # run as a script, not with -m
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 def print_board(columns: List[int]) -> None:
