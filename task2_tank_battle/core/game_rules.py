@@ -2,14 +2,17 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
-from task2_tank_battle.core.actions import ACTIONS_WITHOUT_FIRE, ALL_ACTIONS, MOVE_DIRECTIONS, Action
+from task2_tank_battle.core.actions import ACTIONS_WITHOUT_FIRE, ALL_ACTIONS, Action, Direction
 from task2_tank_battle.core.entities import (BULLET_SPEED, DAMAGE_PER_HIT, Base, Bullet, BulletTrail,
                                              GameEvent, Tank)
 from task2_tank_battle.core.game_state import PLAYER_ONE, PLAYER_TWO, GameState
 
 WIN_SCORE = 10_000
+
+# tuple.__new__(Tank, fields) builds a NamedTuple without the Python-level __new__ / _replace wrappers.
+_new = tuple.__new__
 
 
 class Outcome(Enum):
@@ -17,6 +20,41 @@ class Outcome(Enum):
     PLAYER_ONE_WINS = "Player 1 wins"
     PLAYER_TWO_WINS = "Player 2 wins"
     DRAW = "Draw"
+
+
+def _move_target(tank: Tank, direction: Direction, other: Tank, width: int, height: int,
+                 walls: Dict[Tuple[int, int], int], base1: Base, base2: Base) -> Optional[Tuple[int, int]]:
+    """Cell the tank moves into, or None if it is blocked (edge, wall, base, or the other tank's cell)."""
+    nx, ny = tank.x + direction.dx, tank.y + direction.dy
+    if nx < 0 or ny < 0 or nx >= width or ny >= height or (nx, ny) in walls:
+        return None
+    if (nx == base1.x and ny == base1.y) or (nx == base2.x and ny == base2.y) or (nx == other.x and ny == other.y):
+        return None
+    return nx, ny
+
+
+def _hit_tank_or_base(tanks: List[Tank], bases: List[Base], x: int, y: int, owner: int,
+                      events: Optional[List[GameEvent]]) -> bool:
+    """Damage the live tank or base on (x, y), tanks first. Updates the lists in place."""
+    for k in (0, 1):
+        tank = tanks[k]
+        if tank.hp > 0 and tank.x == x and tank.y == y:
+            hp = tank.hp - DAMAGE_PER_HIT
+            tanks[k] = _new(Tank, (tank.player, x, y, tank.facing, hp))
+            if events is not None:
+                kind = "destroy_tank" if hp <= 0 else "hit_tank"
+                events.append(GameEvent(kind, x, y, owner, f"P{k + 1} tank HP {hp}"))
+            return True
+    for k in (0, 1):
+        base = bases[k]
+        if base.hp > 0 and base.x == x and base.y == y:
+            hp = base.hp - DAMAGE_PER_HIT
+            bases[k] = _new(Base, (base.player, x, y, hp))
+            if events is not None:
+                kind = "destroy_base" if hp <= 0 else "hit_base"
+                events.append(GameEvent(kind, x, y, owner, f"P{k + 1} base HP {hp}"))
+            return True
+    return False
 
 
 class TankBattleRules:
@@ -38,98 +76,111 @@ class TankBattleRules:
 
     # ------------------------------------------------------------------ RESULT(s, a)
     def step(self, state: GameState, actions: Tuple[Action, Action], record: bool = False) -> GameState:
-        """Transition function. `actions[p]` is the action of player p. `record=True` stores events for the UI."""
+        """
+        Transition function. `actions[p]` is the action of player p. `record=True` stores events for the UI.
+
+        This is the innermost operation of the search (one call per generated node), so it is written for
+        speed: local variables instead of attribute lookups, no closures, tuples built directly instead of
+        NamedTuple._replace, and a shortcut when no bullet is in the air. tests/reference_impl.py keeps the
+        straightforward version, and the tests check that both produce exactly the same states.
+        """
         events: Optional[List[GameEvent]] = [] if record else None
-        tanks = self._move_tanks(state, actions)
-        bullets = list(state.bullets)
-        first_new_bullet = len(bullets)
-        for player in (PLAYER_ONE, PLAYER_TWO):
-            tank = tanks[player]
-            can_fire = not (self.one_bullet_per_tank and state.has_active_bullet(player))
-            if actions[player] is Action.FIRE and tank.hp > 0 and can_fire:
-                bullets.append(Bullet(player, tank.x, tank.y, tank.facing))
-                if events is not None:
-                    events.append(GameEvent("fire", tank.x, tank.y, player))
+        width, height, walls = state.width, state.height, state.walls
+        tank1, tank2 = state.tanks
+        base1, base2 = state.bases
+        action1, action2 = actions
 
-        walls, tanks, bases, bullets, trails = self._advance_bullets(
-            state, tanks, list(state.bases), bullets, first_new_bullet, events)
+        # (1) Movement. A move action always turns the tank; it only moves if the target cell is free
+        # (not the map edge, a wall, a base, or the other tank's cell). If both want the same cell, neither moves.
+        dir1 = action1.move_direction if tank1.hp > 0 else None
+        dir2 = action2.move_direction if tank2.hp > 0 else None
+        if dir1 is not None or dir2 is not None:
+            target1 = None if dir1 is None else _move_target(tank1, dir1, tank2, width, height, walls, base1, base2)
+            target2 = None if dir2 is None else _move_target(tank2, dir2, tank1, width, height, walls, base1, base2)
+            if target1 is not None and target1 == target2:
+                target1 = target2 = None
+            if dir1 is not None:
+                x, y = target1 if target1 is not None else (tank1.x, tank1.y)
+                tank1 = _new(Tank, (tank1.player, x, y, dir1, tank1.hp))
+            if dir2 is not None:
+                x, y = target2 if target2 is not None else (tank2.x, tank2.y)
+                tank2 = _new(Tank, (tank2.player, x, y, dir2, tank2.hp))
 
-        return GameState(state.width, state.height, walls, tuple(tanks), tuple(bases), tuple(bullets),
+        # (2) Firing. The new bullet starts on the tank's cell (after it moved / turned).
+        old_bullets = state.bullets
+        fire1 = action1 is Action.FIRE
+        fire2 = action2 is Action.FIRE
+        if (fire1 or fire2) and self.one_bullet_per_tank:
+            for bullet in old_bullets:
+                if bullet.owner == PLAYER_ONE:
+                    fire1 = False
+                elif bullet.owner == PLAYER_TWO:
+                    fire2 = False
+        fire1 = fire1 and tank1.hp > 0
+        fire2 = fire2 and tank2.hp > 0
+
+        if not old_bullets and not fire1 and not fire2:
+            # Nothing in the air: walls, bases and HP cannot change during this cycle.
+            return GameState(width, height, walls, (tank1, tank2), state.bases, (),
+                             state.turn + 1, state.max_turns, tuple(events) if events is not None else (), ())
+
+        bullets = list(old_bullets)
+        if fire1:
+            bullets.append(_new(Bullet, (PLAYER_ONE, tank1.x, tank1.y, tank1.facing)))
+            if events is not None:
+                events.append(GameEvent("fire", tank1.x, tank1.y, PLAYER_ONE))
+        if fire2:
+            bullets.append(_new(Bullet, (PLAYER_TWO, tank2.x, tank2.y, tank2.facing)))
+            if events is not None:
+                events.append(GameEvent("fire", tank2.x, tank2.y, PLAYER_TWO))
+
+        # (3) Bullets.
+        tanks = [tank1, tank2]
+        bases = [base1, base2]
+        walls, remaining, trails = self._advance_bullets(width, height, walls, tanks, bases, bullets,
+                                                         len(old_bullets), events)
+        return GameState(width, height, walls, (tanks[0], tanks[1]), (bases[0], bases[1]), remaining,
                          state.turn + 1, state.max_turns,
-                         tuple(events) if events is not None else (), tuple(trails))
+                         tuple(events) if events is not None else (), trails)
 
-    def _move_tanks(self, state: GameState, actions: Tuple[Action, Action]) -> List[Tank]:
-        """
-        A move action always turns the tank; it only moves if the target cell is free.
-        If both tanks want the same cell, neither moves.
-        """
-        tanks = list(state.tanks)
-        targets: List[Optional[Tuple[int, int]]] = [None, None]
-        for player in (PLAYER_ONE, PLAYER_TWO):
-            tank = tanks[player]
-            direction = MOVE_DIRECTIONS.get(actions[player])
-            if direction is None or tank.hp <= 0:
-                continue
-            tanks[player] = tank._replace(facing=direction)
-            nx, ny = tank.x + direction.dx, tank.y + direction.dy
-            other = state.tanks[1 - player]
-            if state.is_blocked_for_tank(nx, ny) or (other.x == nx and other.y == ny):
-                continue
-            targets[player] = (nx, ny)
-
-        if targets[0] is not None and targets[0] == targets[1]:
-            targets = [None, None]
-        for player in (PLAYER_ONE, PLAYER_TWO):
-            if targets[player] is not None:
-                tanks[player] = tanks[player]._replace(x=targets[player][0], y=targets[player][1])
-        return tanks
-
-    def _advance_bullets(self, state: GameState, tanks: List[Tank], bases: List[Base],
-                         bullets: List[Bullet], first_new_bullet: int,
+    def _advance_bullets(self, width: int, height: int, walls: Dict[Tuple[int, int], int], tanks: List[Tank],
+                         bases: List[Base], bullets: List[Bullet], first_new_bullet: int,
                          events: Optional[List[GameEvent]]):
         """
         Move every bullet cell by cell (bullet_speed times). After each cell we check, in order:
-        map edge -> wall -> tank -> base. A bullet stops right after a hit.
+        map edge -> wall -> tank -> base. A bullet stops right after a hit. `tanks` and `bases` are
+        updated in place; `walls` is copied before its first change (copy-on-write).
+        Returns (walls, remaining bullets, trails).
         """
-        walls = state.walls
-        walls_copied = False
-        alive = [True] * len(bullets)
-        positions = [(b.x, b.y) for b in bullets]
+        count = len(bullets)
+        alive = [True] * count
+        xs = [b.x for b in bullets]
+        ys = [b.y for b in bullets]
         trails = [[(b.x, b.y)] for b in bullets] if events is not None else None
-
-        def hit_tank_or_base(index: int, x: int, y: int) -> bool:
-            owner = bullets[index].owner
-            for k, tank in enumerate(tanks):
-                if tank.hp > 0 and tank.x == x and tank.y == y:
-                    tanks[k] = tank._replace(hp=tank.hp - DAMAGE_PER_HIT)
-                    if events is not None:
-                        kind = "destroy_tank" if tanks[k].hp <= 0 else "hit_tank"
-                        events.append(GameEvent(kind, x, y, owner, f"P{k + 1} tank HP {tanks[k].hp}"))
-                    return True
-            for k, base in enumerate(bases):
-                if base.hp > 0 and base.x == x and base.y == y:
-                    bases[k] = base._replace(hp=base.hp - DAMAGE_PER_HIT)
-                    if events is not None:
-                        kind = "destroy_base" if bases[k].hp <= 0 else "hit_base"
-                        events.append(GameEvent(kind, x, y, owner, f"P{k + 1} base HP {bases[k].hp}"))
-                    return True
-            return False
+        walls_copied = False
+        flying = count
 
         # Old bullets that a tank drove into this cycle hit that tank before flying on.
         for i in range(first_new_bullet):
-            if hit_tank_or_base(i, positions[i][0], positions[i][1]):
+            if _hit_tank_or_base(tanks, bases, xs[i], ys[i], bullets[i].owner, events):
                 alive[i] = False
+                flying -= 1
 
         for _ in range(self.bullet_speed):
-            for i, bullet in enumerate(bullets):
+            if not flying:
+                break
+            for i in range(count):
                 if not alive[i]:
                     continue
-                nx = positions[i][0] + bullet.direction.dx
-                ny = positions[i][1] + bullet.direction.dy
-                if not (0 <= nx < state.width and 0 <= ny < state.height):
+                direction = bullets[i].direction
+                nx = xs[i] + direction.dx
+                ny = ys[i] + direction.dy
+                if nx < 0 or ny < 0 or nx >= width or ny >= height:
                     alive[i] = False
+                    flying -= 1
                     continue
-                positions[i] = (nx, ny)
+                xs[i] = nx
+                ys[i] = ny
                 if trails is not None:
                     trails[i].append((nx, ny))
 
@@ -141,24 +192,26 @@ class TankBattleRules:
                     if wall_hp - DAMAGE_PER_HIT <= 0:
                         del walls[(nx, ny)]
                         if events is not None:
-                            events.append(GameEvent("destroy_wall", nx, ny, bullet.owner))
+                            events.append(GameEvent("destroy_wall", nx, ny, bullets[i].owner))
                     else:
                         walls[(nx, ny)] = wall_hp - DAMAGE_PER_HIT
                         if events is not None:
-                            events.append(GameEvent("hit_wall", nx, ny, bullet.owner))
+                            events.append(GameEvent("hit_wall", nx, ny, bullets[i].owner))
                     alive[i] = False
+                    flying -= 1
                     continue
 
                 # As in the project description, bullets only collide with walls, tanks and bases
                 # (two bullets pass through each other).
-                if hit_tank_or_base(i, nx, ny):
+                if _hit_tank_or_base(tanks, bases, nx, ny, bullets[i].owner, events):
                     alive[i] = False
+                    flying -= 1
 
-        remaining = [bullets[i]._replace(x=positions[i][0], y=positions[i][1])
-                     for i in range(len(bullets)) if alive[i]]
-        trail_list = [BulletTrail(bullets[i].owner, tuple(trails[i])) for i in range(len(bullets))] \
-            if trails is not None else []
-        return walls, tanks, bases, remaining, trail_list
+        remaining = tuple(_new(Bullet, (b.owner, xs[i], ys[i], b.direction))
+                          for i, b in enumerate(bullets) if alive[i])
+        trail_tuple = tuple(BulletTrail(bullets[i].owner, tuple(trails[i])) for i in range(count)) \
+            if trails is not None else ()
+        return walls, remaining, trail_tuple
 
     # ------------------------------------------------------------------ TERMINAL-TEST(s)
     def outcome(self, state: GameState) -> Outcome:
@@ -174,15 +227,21 @@ class TankBattleRules:
         return Outcome.DRAW
 
     def is_terminal(self, state: GameState) -> bool:
-        return self.outcome(state) is not Outcome.ONGOING
+        """Same answer as outcome() is not ONGOING, without building an Outcome (called at every search node)."""
+        tank1, tank2 = state.tanks
+        base1, base2 = state.bases
+        if tank1.hp > 0 and base1.hp > 0 and tank2.hp > 0 and base2.hp > 0:
+            return state.turn >= state.max_turns
+        return True
 
     def winner(self, state: GameState) -> Optional[int]:
-        result = self.outcome(state)
-        if result is Outcome.PLAYER_ONE_WINS:
-            return PLAYER_ONE
-        if result is Outcome.PLAYER_TWO_WINS:
-            return PLAYER_TWO
-        return None
+        tank1, tank2 = state.tanks
+        base1, base2 = state.bases
+        p1_alive = tank1.hp > 0 and base1.hp > 0
+        p2_alive = tank2.hp > 0 and base2.hp > 0
+        if p1_alive == p2_alive:
+            return None  # both alive (ongoing or turn-limit draw) or both destroyed (draw)
+        return PLAYER_ONE if p1_alive else PLAYER_TWO
 
     # ------------------------------------------------------------------ UTILITY(s, p)
     def utility(self, state: GameState, player: int) -> float:

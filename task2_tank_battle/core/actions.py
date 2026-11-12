@@ -12,13 +12,11 @@ class Direction(Enum):
     LEFT = (-1, 0)
     RIGHT = (1, 0)
 
-    @property
-    def dx(self) -> int:
-        return self.value[0]
-
-    @property
-    def dy(self) -> int:
-        return self.value[1]
+    def __init__(self, dx: int, dy: int):
+        # Plain attributes instead of properties: read millions of times per search,
+        # and Enum's `.value` descriptor costs a Python-level call on every access.
+        self.dx = dx
+        self.dy = dy
 
 
 class Action(Enum):
@@ -30,13 +28,19 @@ class Action(Enum):
     STAY = "STAY"
 
 
-# Lookup table instead of if/else chains: faster inside the search tree.
 MOVE_DIRECTIONS = {
     Action.MOVE_UP: Direction.UP,
     Action.MOVE_DOWN: Direction.DOWN,
     Action.MOVE_LEFT: Direction.LEFT,
     Action.MOVE_RIGHT: Direction.RIGHT,
 }
+
+# `action.move_direction` (a Direction, or None for FIRE / STAY) is the attribute form of MOVE_DIRECTIONS.
+# The rules use it in the search tree: Enum members hash in Python code, so dict lookups keyed by an
+# Action are several times slower than reading an attribute.
+for _action in Action:
+    _action.move_direction = MOVE_DIRECTIONS.get(_action)
+del _action
 
 ALL_ACTIONS = (Action.MOVE_UP, Action.MOVE_DOWN, Action.MOVE_LEFT, Action.MOVE_RIGHT, Action.FIRE, Action.STAY)
 ACTIONS_WITHOUT_FIRE = tuple(a for a in ALL_ACTIONS if a is not Action.FIRE)

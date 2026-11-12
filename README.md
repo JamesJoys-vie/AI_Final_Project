@@ -232,6 +232,14 @@ Dijkstra distance to the enemy base (walls weighted by the shots needed to break
 aim (being lined up with and facing a target), and bullets already flying toward a target.
 Optional **iterative deepening** with a time budget keeps the GUI real-time.
 
+**Fast game engine.** `RESULT(s, a)` runs once per generated node, so it is written for speed: direction
+offsets are plain attributes (no Enum property or Enum hashing in the inner loop), states are built with
+`tuple.__new__` instead of `NamedTuple._replace`, there is no closure per call, and a cycle with no bullet in the
+air skips the bullet phase. The search checks `TERMINAL-TEST` once per node, and each state's MIN replies are
+ordered once instead of once per MAX action. The tests check against a frozen copy of the original code that every
+state and `EVAL(s)` value is unchanged, and the benchmark explores exactly the same nodes as before; only the time
+changes: **2.0–2.6× more nodes per second** for all four configurations (see `results/baseline/` vs `results/phase2/`).
+
 ### Usage
 
 ```bash

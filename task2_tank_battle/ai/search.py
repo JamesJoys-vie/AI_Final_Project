@@ -100,22 +100,33 @@ class AdversarialSearch(ABC):
 
     def _result(self, state: GameState, my_action: Action, opponent_action: Action) -> GameState:
         """RESULT(s, a) + node counter + periodic deadline check."""
-        self.stats.nodes_generated += 1
-        if self.deadline is not None and self.stats.nodes_generated % self.TIME_CHECK_INTERVAL == 0:
+        stats = self.stats
+        stats.nodes_generated += 1
+        if self.deadline is not None and stats.nodes_generated % self.TIME_CHECK_INTERVAL == 0:
             if time.perf_counter() > self.deadline:
-                self.stats.timed_out = True
+                stats.timed_out = True
                 raise SearchTimeout()
-        return self.rules.apply_for_player(state, self.player, my_action, opponent_action)
+        if self.player == 0:
+            return self.rules.step(state, (my_action, opponent_action))
+        return self.rules.step(state, (opponent_action, my_action))
 
-    def _cutoff(self, state: GameState, depth: int) -> bool:
-        """CUTOFF-TEST: stop at terminal states or when the depth limit is reached."""
-        return depth == 0 or self.rules.is_terminal(state)
-
-    def _evaluate(self, state: GameState, ply: int) -> float:
-        self.stats.leaves_evaluated += 1
-        if ply > self.stats.max_ply:
-            self.stats.max_ply = ply
-        return self.evaluator.evaluate(state, self.player)
+    def _leaf_value(self, state: GameState, depth: int, ply: int) -> Optional[float]:
+        """
+        CUTOFF-TEST + EVAL in one call: the value of `state` if the search stops here, else None.
+        Terminal states get the exact UTILITY; depth-limit states get the evaluator's estimate.
+        The terminal test runs once per node (the evaluator does not repeat it).
+        """
+        if self.rules.is_terminal(state):
+            value = self.rules.utility(state, self.player)
+        elif depth == 0:
+            value = self.evaluator.evaluate_nonterminal(state, self.player)
+        else:
+            return None
+        stats = self.stats
+        stats.leaves_evaluated += 1
+        if ply > stats.max_ply:
+            stats.max_ply = ply
+        return value
 
 
 class MinimaxSearch(AdversarialSearch):
@@ -125,23 +136,28 @@ class MinimaxSearch(AdversarialSearch):
 
     def _root(self, state: GameState, depth: int, actions: List[Action]) -> Tuple[Action, float]:
         best_action, best_value = actions[0], -math.inf
+        replies = self._actions(state, self.opponent)
         for action in actions:
-            value = self._min_value(state, action, depth, 1)
+            value = self._min_value(state, action, replies, depth, 1)
             if value > best_value:
                 best_action, best_value = action, value
         return best_action, best_value
 
     def _max_value(self, state: GameState, depth: int, ply: int) -> float:
-        if self._cutoff(state, depth):
-            return self._evaluate(state, ply)
+        leaf = self._leaf_value(state, depth, ply)
+        if leaf is not None:
+            return leaf
         value = -math.inf
+        replies = self._actions(state, self.opponent)
         for action in self._actions(state, self.player):
-            value = max(value, self._min_value(state, action, depth, ply + 1))
+            value = max(value, self._min_value(state, action, replies, depth, ply + 1))
         return value
 
-    def _min_value(self, state: GameState, my_action: Action, depth: int, ply: int) -> float:
+    def _min_value(self, state: GameState, my_action: Action, replies: Sequence[Action], depth: int,
+                   ply: int) -> float:
+        """MIN's replies to `my_action` in `state`. `replies` is computed once per state by the caller."""
         value = math.inf
-        for reply in self._actions(state, self.opponent):
+        for reply in replies:
             child = self._result(state, my_action, reply)
             value = min(value, self._max_value(child, depth - 1, ply + 1))
         return value
@@ -158,19 +174,22 @@ class AlphaBetaSearch(AdversarialSearch):
     def _root(self, state: GameState, depth: int, actions: List[Action]) -> Tuple[Action, float]:
         best_action, best_value = actions[0], -math.inf
         alpha, beta = -math.inf, math.inf
+        replies = self._actions(state, self.opponent)
         for action in actions:
-            value = self._min_value(state, action, depth, alpha, beta, 1)
+            value = self._min_value(state, action, replies, depth, alpha, beta, 1)
             if value > best_value:
                 best_action, best_value = action, value
             alpha = max(alpha, best_value)
         return best_action, best_value
 
     def _max_value(self, state: GameState, depth: int, alpha: float, beta: float, ply: int) -> float:
-        if self._cutoff(state, depth):
-            return self._evaluate(state, ply)
+        leaf = self._leaf_value(state, depth, ply)
+        if leaf is not None:
+            return leaf
         value = -math.inf
+        replies = self._actions(state, self.opponent)
         for action in self._actions(state, self.player):
-            value = max(value, self._min_value(state, action, depth, alpha, beta, ply + 1))
+            value = max(value, self._min_value(state, action, replies, depth, alpha, beta, ply + 1))
             if value >= beta:
                 # MIN already has a better option elsewhere -> prune remaining actions.
                 self.stats.prunings += 1
@@ -178,10 +197,11 @@ class AlphaBetaSearch(AdversarialSearch):
             alpha = max(alpha, value)
         return value
 
-    def _min_value(self, state: GameState, my_action: Action, depth: int, alpha: float, beta: float,
-                   ply: int) -> float:
+    def _min_value(self, state: GameState, my_action: Action, replies: Sequence[Action], depth: int,
+                   alpha: float, beta: float, ply: int) -> float:
+        """MIN's replies to `my_action` in `state`. `replies` is computed once per state by the caller."""
         value = math.inf
-        for reply in self._actions(state, self.opponent):
+        for reply in replies:
             child = self._result(state, my_action, reply)
             value = min(value, self._max_value(child, depth - 1, alpha, beta, ply + 1))
             if value <= alpha:

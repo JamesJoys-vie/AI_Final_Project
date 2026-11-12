@@ -47,9 +47,11 @@ class GameState:
         return 0 <= x < self.width and 0 <= y < self.height
 
     def base_at(self, x: int, y: int) -> Optional[Base]:
-        for base in self.bases:
-            if base.x == x and base.y == y:
-                return base
+        first, second = self.bases
+        if first.x == x and first.y == y:
+            return first
+        if second.x == x and second.y == y:
+            return second
         return None
 
     def is_blocked_for_tank(self, x: int, y: int) -> bool:
