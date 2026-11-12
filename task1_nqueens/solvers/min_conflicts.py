@@ -7,7 +7,7 @@ from __future__ import annotations
 import random
 import time
 from bisect import bisect_left, insort
-from typing import Dict, Iterator, List, NamedTuple, Optional, Set
+from typing import Callable, Dict, Iterator, List, NamedTuple, Optional, Set
 
 from task1_nqueens.solvers.solve_result import SolveResult
 from task1_nqueens.solvers.variable_selectors import RandomConflictedSelector, VariableSelector
@@ -135,34 +135,84 @@ class MinConflictsStep(NamedTuple):
     restart: int = 0
 
 
+def random_columns(n: int, rng: random.Random) -> List[int]:
+    """Complete random assignment: every row gets an independent uniformly random column."""
+    return [rng.randrange(n) for _ in range(n)]
+
+
+def greedy_columns(n: int, rng: random.Random, tries: int = 20) -> List[int]:
+    """
+    Greedy initial assignment (in the spirit of Minton et al. 1992 / Sosic & Gu 1991), O(N) expected.
+    Columns are drawn without replacement, so the result is a permutation (no column conflicts).
+    For each row we try up to `tries` random unused columns and keep the first one that no placed
+    queen attacks diagonally; if none is found, a random unused column is accepted. Only the last
+    few rows usually end up conflicted, so the repair phase starts close to a solution.
+    """
+    free = list(range(n))
+    diag = [False] * (2 * n - 1)
+    anti = [False] * (2 * n - 1)
+    columns = [0] * n
+    randrange = rng.randrange
+    for row in range(n):
+        remaining = n - row
+        index = randrange(remaining)
+        for _ in range(min(tries, remaining)):
+            col = free[index]
+            if not diag[row - col + n - 1] and not anti[row + col]:
+                break
+            index = randrange(remaining)
+        col = free[index]
+        free[index] = free[remaining - 1]  # O(1) removal from the unused pool
+        free.pop()
+        columns[row] = col
+        diag[row - col + n - 1] = True
+        anti[row + col] = True
+    return columns
+
+
+INITIALIZERS: Dict[str, Callable[[int, random.Random], List[int]]] = {
+    "random": random_columns,
+    "greedy": greedy_columns,
+}
+
+
 class MinConflictsSolver:
     """
-    MIN-CONFLICTS(csp, max_steps): start from a complete random assignment, then repeatedly
+    MIN-CONFLICTS(csp, max_steps): start from a complete assignment, then repeatedly
     pick a conflicted variable (strategy) and give it the value with the fewest conflicts.
+    `init` chooses the starting assignment: "random" (textbook) or "greedy" (see greedy_columns).
     If max_steps (= max_steps_factor * N) repairs do not reach a solution, restart from a new
-    random assignment, at most `max_restarts` times.
+    initial assignment, at most `max_restarts` times.
     """
 
     def __init__(self, selector: Optional[VariableSelector] = None, max_steps_factor: int = 50,
-                 seed: Optional[int] = None, max_restarts: int = 10):
+                 seed: Optional[int] = None, max_restarts: int = 10, init: str = "random"):
+        if init not in INITIALIZERS:
+            raise ValueError(f"Unknown init '{init}', expected one of {sorted(INITIALIZERS)}")
         self.selector = selector or RandomConflictedSelector()
         self.max_steps_factor = max_steps_factor
         self.max_restarts = max_restarts
         self.seed = seed
+        self.init = init
         self.restarts = 0
+        self.initial_pairs = 0
 
     @property
     def name(self) -> str:
-        return f"Min-Conflicts {self.selector.name}"
+        suffix = "" if self.init == "random" else f" [{self.init} init]"
+        return f"Min-Conflicts {self.selector.name}{suffix}"
 
     def iter_steps(self, n: int, rng: Optional[random.Random] = None) -> Iterator[MinConflictsStep]:
         """Generator version (one yield per repair) used by the GUI animation and by solve()."""
         rng = rng or random.Random(self.seed)
         choice = rng.choice
+        initializer = INITIALIZERS[self.init]
         step = 0
         for attempt in range(self.max_restarts + 1):
             self.restarts = attempt
-            self.board = board = ConflictBoard([rng.randrange(n) for _ in range(n)])
+            self.board = board = ConflictBoard(initializer(n, rng))
+            if attempt == 0:
+                self.initial_pairs = board.pairs
             self.selector.reset(n)
             for _ in range(self.max_steps_factor * n):
                 if not board.conflicted:
@@ -187,4 +237,4 @@ class MinConflictsSolver:
         elapsed = time.perf_counter() - start
         solved = self.board.pairs == 0
         return SolveResult(self.name, n, solved, list(self.board.columns), elapsed, steps,
-                           restarts=self.restarts)
+                           extra={"initial_pairs": self.initial_pairs}, restarts=self.restarts)

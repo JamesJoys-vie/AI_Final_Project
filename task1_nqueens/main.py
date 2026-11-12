@@ -2,8 +2,9 @@
 Entry point of Task 1. Run from the `source` folder:
     python -m task1_nqueens                    -> interactive GUI
     python -m task1_nqueens sat 8              -> solve N=8 with Glucose3 and print the board
-    python -m task1_nqueens minconflicts 64    -> standard vs heuristic Min-Conflicts on N=64
-    python -m task1_nqueens benchmark --runs 20
+    python -m task1_nqueens minconflicts 64    -> standard vs heuristic Min-Conflicts on N=64 (random and greedy init)
+    python -m task1_nqueens minconflicts 64 --init=greedy
+    python -m task1_nqueens benchmark --runs 20 [--init random|greedy|both]
 """
 from __future__ import annotations
 
@@ -31,8 +32,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     elif command == "minconflicts":
         from task1_nqueens.solvers.min_conflicts import MinConflictsSolver
         from task1_nqueens.solvers.variable_selectors import MaxConflictTabuSelector, RandomConflictedSelector
-        for selector in (RandomConflictedSelector(), MaxConflictTabuSelector()):
-            print(MinConflictsSolver(selector, seed=0).solve(n).summary())
+        inits = [arg.split("=", 1)[1] for arg in argv if arg.startswith("--init=")] or ["random", "greedy"]
+        for init in inits:
+            for selector in (RandomConflictedSelector(), MaxConflictTabuSelector()):
+                print(MinConflictsSolver(selector, seed=0, init=init).solve(n).summary())
     elif command == "benchmark":
         from task1_nqueens.experiments.benchmark import main as run_benchmark
         run_benchmark(argv)
