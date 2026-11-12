@@ -1,0 +1,17 @@
+n,strategy,runs,success_rate,mean_steps,median_steps,mean_ms,stdev_ms
+8,Standard (random conflicted),20,0.9,79.8,30.0,0.7,0.96
+8,Heuristic (max-conflict + tabu),20,0.9,63,15.0,0.65,1.26
+16,Standard (random conflicted),20,1.0,100.3,74.0,1.38,1.11
+16,Heuristic (max-conflict + tabu),20,0.95,77.2,35.0,1.13,2.3
+32,Standard (random conflicted),20,1.0,103,99.0,2.71,1.32
+32,Heuristic (max-conflict + tabu),20,1.0,44.9,41.0,1.29,0.51
+64,Standard (random conflicted),20,1.0,107.2,102.0,5.19,1.76
+64,Heuristic (max-conflict + tabu),20,1.0,66.8,65.0,3.6,0.89
+128,Standard (random conflicted),20,1.0,157.3,157.5,14.85,3.07
+128,Heuristic (max-conflict + tabu),20,1.0,102.9,97.5,11.16,2.03
+256,Standard (random conflicted),20,1.0,239.7,230.5,46.38,5.53
+256,Heuristic (max-conflict + tabu),20,1.0,177.3,174.0,38.27,4.75
+512,Standard (random conflicted),20,1.0,416,407.0,181.35,29.09
+512,Heuristic (max-conflict + tabu),20,1.0,293.9,295.5,138.26,9.07
+1000,Standard (random conflicted),20,1.0,710.2,709.0,550.05,38.3
+1000,Heuristic (max-conflict + tabu),20,1.0,543.8,535.5,452.17,24.87
