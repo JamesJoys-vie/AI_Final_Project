@@ -16,6 +16,7 @@ class SolveResult:
     clauses: int = 0
     variables: int = 0
     extra: Dict[str, float] = field(default_factory=dict)
+    restarts: int = 0
 
     def summary(self) -> str:
         status = "solved" if self.solved else "FAILED"
@@ -24,4 +25,6 @@ class SolveResult:
             parts.append(f"{self.clauses:,} clauses / {self.variables:,} vars")
         if self.steps:
             parts.append(f"{self.steps:,} steps")
+        if self.restarts:
+            parts.append(f"{self.restarts} restart(s)")
         return ", ".join(parts)

@@ -6,45 +6,124 @@ from __future__ import annotations
 
 import random
 import time
-from typing import Iterator, List, NamedTuple, Optional
+from bisect import bisect_left, insort
+from typing import Dict, Iterator, List, NamedTuple, Optional, Set
 
 from task1_nqueens.solvers.solve_result import SolveResult
 from task1_nqueens.solvers.variable_selectors import RandomConflictedSelector, VariableSelector
 
 
 class ConflictBoard:
-    """Keeps queen counters per column / diagonal / anti-diagonal, so conflicts(row, col) is O(1)."""
+    """
+    Incremental state of a complete assignment (one queen per row).
+
+    Per line (column / diagonal / anti-diagonal) it keeps the queen count and the set of rows on it,
+    so a move only touches the rows sharing one of the 6 lines involved (old and new square) instead
+    of rescanning the whole board. Maintained incrementally after every move:
+      * `row_conflicts[r]` - number of other queens attacking the queen of row r,
+      * `conflicted`       - rows with row_conflicts > 0, kept sorted (deterministic random choice),
+      * `buckets`          - conflict count -> set of rows with that count (fast "most conflicted"),
+      * `pairs`            - total number of attacking pairs.
+    """
 
     def __init__(self, columns: List[int]):
-        self.n = len(columns)
+        n = self.n = len(columns)
         self.columns = list(columns)
-        self.col_count = [0] * self.n
-        self.diag_count = [0] * (2 * self.n - 1)
-        self.anti_count = [0] * (2 * self.n - 1)
+        self.col_count = [0] * n
+        self.diag_count = [0] * (2 * n - 1)
+        self.anti_count = [0] * (2 * n - 1)
+        self.col_rows: List[Set[int]] = [set() for _ in range(n)]
+        self.diag_rows: List[Set[int]] = [set() for _ in range(2 * n - 1)]
+        self.anti_rows: List[Set[int]] = [set() for _ in range(2 * n - 1)]
+        self.pairs = 0
         for row, col in enumerate(self.columns):
-            self._update(row, col, +1)
+            self._add(row, col)
 
-    def _update(self, row: int, col: int, delta: int) -> None:
-        self.col_count[col] += delta
-        self.diag_count[row - col + self.n - 1] += delta
-        self.anti_count[row + col] += delta
+        self.row_conflicts = [self.conflicts(row, col) for row, col in enumerate(self.columns)]
+        self.conflicted: List[int] = [row for row in range(n) if self.row_conflicts[row] > 0]
+        self.buckets: Dict[int, Set[int]] = {}
+        for row in self.conflicted:
+            self.buckets.setdefault(self.row_conflicts[row], set()).add(row)
 
+    # ----------------------------------------------------------------- line counters
+    def _add(self, row: int, col: int) -> None:
+        d, a = row - col + self.n - 1, row + col
+        self.pairs += self.col_count[col] + self.diag_count[d] + self.anti_count[a]
+        self.col_count[col] += 1
+        self.diag_count[d] += 1
+        self.anti_count[a] += 1
+        self.col_rows[col].add(row)
+        self.diag_rows[d].add(row)
+        self.anti_rows[a].add(row)
+
+    def _remove(self, row: int, col: int) -> None:
+        d, a = row - col + self.n - 1, row + col
+        self.col_count[col] -= 1
+        self.diag_count[d] -= 1
+        self.anti_count[a] -= 1
+        self.pairs -= self.col_count[col] + self.diag_count[d] + self.anti_count[a]
+        self.col_rows[col].discard(row)
+        self.diag_rows[d].discard(row)
+        self.anti_rows[a].discard(row)
+
+    def _rows_on_lines(self, row: int, col: int) -> List[int]:
+        """Rows (other than `row`) whose queen shares a line with square (row, col).
+        Two distinct squares share at most one line, so no row is listed twice."""
+        d, a = row - col + self.n - 1, row + col
+        return [r for line in (self.col_rows[col], self.diag_rows[d], self.anti_rows[a]) for r in line if r != row]
+
+    # ----------------------------------------------------------------- per-row conflicts
+    def _set_row_conflicts(self, row: int, value: int) -> None:
+        old = self.row_conflicts[row]
+        if old == value:
+            return
+        self.row_conflicts[row] = value
+        if old > 0:
+            bucket = self.buckets[old]
+            bucket.discard(row)
+            if not bucket:
+                del self.buckets[old]
+        else:
+            insort(self.conflicted, row)
+        if value > 0:
+            self.buckets.setdefault(value, set()).add(row)
+        else:
+            del self.conflicted[bisect_left(self.conflicted, row)]
+
+    # ----------------------------------------------------------------- public API
     def conflicts(self, row: int, col: int) -> int:
         """Number of OTHER queens attacking square (row, col)."""
         count = self.col_count[col] + self.diag_count[row - col + self.n - 1] + self.anti_count[row + col]
         return count - 3 if self.columns[row] == col else count
 
+    def column_costs(self, row: int) -> List[int]:
+        """conflicts(row, col) for every column, computed with list slices instead of N method calls."""
+        n = self.n
+        diag = self.diag_count[row:row + n]
+        diag.reverse()  # diag index of column c is row - c + n - 1, i.e. descending in c
+        costs = [c + d + a for c, d, a in zip(self.col_count, diag, self.anti_count[row:row + n])]
+        costs[self.columns[row]] -= 3
+        return costs
+
     def move(self, row: int, col: int) -> None:
-        self._update(row, self.columns[row], -1)
+        old_col = self.columns[row]
+        if old_col == col:
+            return
+        for other in self._rows_on_lines(row, old_col):
+            self._set_row_conflicts(other, self.row_conflicts[other] - 1)
+        self._remove(row, old_col)
         self.columns[row] = col
-        self._update(row, col, +1)
+        self._add(row, col)
+        for other in self._rows_on_lines(row, col):
+            self._set_row_conflicts(other, self.row_conflicts[other] + 1)
+        self._set_row_conflicts(row, self.conflicts(row, col))
 
     def conflicted_rows(self) -> List[tuple]:
-        return [(row, c) for row in range(self.n) if (c := self.conflicts(row, self.columns[row])) > 0]
+        """(row, conflicts) for every conflicted row, ascending by row."""
+        return [(row, self.row_conflicts[row]) for row in self.conflicted]
 
     def attacking_pairs(self) -> int:
-        lines = self.col_count + self.diag_count + self.anti_count
-        return sum(k * (k - 1) // 2 for k in lines)
+        return self.pairs
 
 
 class MinConflictsStep(NamedTuple):
@@ -53,19 +132,24 @@ class MinConflictsStep(NamedTuple):
     old_col: int
     new_col: int
     attacking_pairs: int
+    restart: int = 0
 
 
 class MinConflictsSolver:
     """
     MIN-CONFLICTS(csp, max_steps): start from a complete random assignment, then repeatedly
     pick a conflicted variable (strategy) and give it the value with the fewest conflicts.
+    If max_steps (= max_steps_factor * N) repairs do not reach a solution, restart from a new
+    random assignment, at most `max_restarts` times.
     """
 
     def __init__(self, selector: Optional[VariableSelector] = None, max_steps_factor: int = 50,
-                 seed: Optional[int] = None):
+                 seed: Optional[int] = None, max_restarts: int = 10):
         self.selector = selector or RandomConflictedSelector()
         self.max_steps_factor = max_steps_factor
+        self.max_restarts = max_restarts
         self.seed = seed
+        self.restarts = 0
 
     @property
     def name(self) -> str:
@@ -74,20 +158,26 @@ class MinConflictsSolver:
     def iter_steps(self, n: int, rng: Optional[random.Random] = None) -> Iterator[MinConflictsStep]:
         """Generator version (one yield per repair) used by the GUI animation and by solve()."""
         rng = rng or random.Random(self.seed)
-        self.board = ConflictBoard([rng.randrange(n) for _ in range(n)])
-        self.selector.reset(n)
-        for step in range(1, self.max_steps_factor * n + 1):
-            conflicted = self.board.conflicted_rows()
-            if not conflicted:
+        choice = rng.choice
+        step = 0
+        for attempt in range(self.max_restarts + 1):
+            self.restarts = attempt
+            self.board = board = ConflictBoard([rng.randrange(n) for _ in range(n)])
+            self.selector.reset(n)
+            for _ in range(self.max_steps_factor * n):
+                if not board.conflicted:
+                    return
+                row = self.selector.select(board, rng)
+                costs = board.column_costs(row)
+                best = min(costs)
+                new_col = choice([col for col, cost in enumerate(costs) if cost == best])
+                old_col = board.columns[row]
+                board.move(row, new_col)
+                self.selector.notify_moved(row)
+                step += 1
+                yield MinConflictsStep(step, row, old_col, new_col, board.pairs, attempt)
+            if not board.conflicted:
                 return
-            row = self.selector.select(conflicted, rng)
-            costs = [self.board.conflicts(row, col) for col in range(n)]
-            best = min(costs)
-            new_col = rng.choice([col for col, cost in enumerate(costs) if cost == best])
-            old_col = self.board.columns[row]
-            self.board.move(row, new_col)
-            self.selector.notify_moved(row)
-            yield MinConflictsStep(step, row, old_col, new_col, self.board.attacking_pairs())
 
     def solve(self, n: int) -> SolveResult:
         start = time.perf_counter()
@@ -95,5 +185,6 @@ class MinConflictsSolver:
         for steps, _ in enumerate(self.iter_steps(n), 1):
             pass
         elapsed = time.perf_counter() - start
-        solved = self.board.attacking_pairs() == 0
-        return SolveResult(self.name, n, solved, list(self.board.columns), elapsed, steps)
+        solved = self.board.pairs == 0
+        return SolveResult(self.name, n, solved, list(self.board.columns), elapsed, steps,
+                           restarts=self.restarts)
