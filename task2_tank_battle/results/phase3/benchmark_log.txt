@@ -1,0 +1,146 @@
+opening  d=1 Minimax                STAY       nodes=       36 time=       0.2 ms nodes/s=  164,159 prunes=      0 ebf=6.00 value=0.0
+opening  d=1 Alpha-Beta             STAY       nodes=       11 time=       0.1 ms nodes/s=  164,425 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 Heuristic Minimax      MOVE_UP    nodes=       36 time=       0.2 ms nodes/s=  167,910 prunes=      0 ebf=6.00 value=0.0
+opening  d=1 Heuristic Alpha-Beta   MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  142,672 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 H-AB no ordering       MOVE_UP    nodes=       18 time=       0.1 ms nodes/s=  184,995 prunes=      4 ebf=4.24 value=0.0
+opening  d=1 H-AB +ordering         MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  166,163 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 H-AB +killers          MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  146,667 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 H-AB +table            MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  150,273 prunes=      5 ebf=3.32 value=0.0
+opening  d=1 H-AB +deepening        MOVE_UP    nodes=       11 time=       0.1 ms nodes/s=  155,148 prunes=      5 ebf=3.32 value=0.0
+opening  d=2 Minimax                STAY       nodes=    1,261 time=       4.9 ms nodes/s=  259,593 prunes=      0 ebf=5.96 value=0.0
+opening  d=2 Alpha-Beta             STAY       nodes=       80 time=       0.3 ms nodes/s=  291,651 prunes=     44 ebf=2.99 value=0.0
+opening  d=2 Heuristic Minimax      MOVE_UP    nodes=    1,261 time=       8.1 ms nodes/s=  155,545 prunes=      0 ebf=5.96 value=0.0
+opening  d=2 Heuristic Alpha-Beta   MOVE_UP    nodes=       91 time=       0.7 ms nodes/s=  124,012 prunes=     49 ebf=3.09 value=0.0
+opening  d=2 H-AB no ordering       MOVE_UP    nodes=      176 time=       1.0 ms nodes/s=  168,890 prunes=     63 ebf=3.64 value=0.0
+opening  d=2 H-AB +ordering         MOVE_UP    nodes=       80 time=       0.6 ms nodes/s=  143,885 prunes=     44 ebf=2.99 value=0.0
+opening  d=2 H-AB +killers          MOVE_UP    nodes=       80 time=       0.6 ms nodes/s=  125,176 prunes=     44 ebf=2.99 value=0.0
+opening  d=2 H-AB +table            MOVE_UP    nodes=       80 time=       0.6 ms nodes/s=  128,185 prunes=     44 ebf=2.99 value=0.0
+opening  d=2 H-AB +deepening        MOVE_UP    nodes=       91 time=       0.7 ms nodes/s=  131,522 prunes=     49 ebf=3.09 value=0.0
+opening  d=3 Minimax                STAY       nodes=   42,470 time=     173.6 ms nodes/s=  244,580 prunes=      0 ebf=5.91 value=0.0
+opening  d=3 Alpha-Beta             STAY       nodes=      485 time=       1.5 ms nodes/s=  313,997 prunes=    280 ebf=2.80 value=0.0
+opening  d=3 Heuristic Minimax      MOVE_UP    nodes=   42,470 time=     275.6 ms nodes/s=  154,118 prunes=      0 ebf=5.91 value=0.0
+opening  d=3 Heuristic Alpha-Beta   MOVE_UP    nodes=      480 time=       3.6 ms nodes/s=  131,915 prunes=    273 ebf=2.80 value=0.0
+opening  d=3 H-AB no ordering       MOVE_UP    nodes=    1,415 time=       7.7 ms nodes/s=  183,792 prunes=    568 ebf=3.35 value=0.0
+opening  d=3 H-AB +ordering         MOVE_UP    nodes=      485 time=       3.2 ms nodes/s=  151,861 prunes=    280 ebf=2.80 value=0.0
+opening  d=3 H-AB +killers          MOVE_UP    nodes=      485 time=       3.6 ms nodes/s=  135,271 prunes=    280 ebf=2.80 value=0.0
+opening  d=3 H-AB +table            MOVE_UP    nodes=      389 time=       3.1 ms nodes/s=  126,855 prunes=    224 ebf=2.70 value=0.0
+opening  d=3 H-AB +deepening        MOVE_UP    nodes=      480 time=       3.8 ms nodes/s=  127,782 prunes=    273 ebf=2.80 value=0.0
+opening  d=4 Minimax                STAY       nodes=1,430,154 time=    5789.8 ms nodes/s=  247,012 prunes=      0 ebf=5.88 value=0.0
+opening  d=4 Alpha-Beta             STAY       nodes=    2,840 time=       9.4 ms nodes/s=  302,788 prunes=  1,659 ebf=2.70 value=0.0
+opening  d=4 Heuristic Minimax      MOVE_UP    nodes=1,430,154 time=    8839.8 ms nodes/s=  161,786 prunes=      0 ebf=5.88 value=0.0
+opening  d=4 Heuristic Alpha-Beta   MOVE_UP    nodes=    1,752 time=      15.0 ms nodes/s=  116,436 prunes=  1,016 ebf=2.54 value=0.0
+opening  d=4 H-AB no ordering       MOVE_UP    nodes=   10,411 time=      54.7 ms nodes/s=  190,405 prunes=  4,329 ebf=3.18 value=0.0
+opening  d=4 H-AB +ordering         MOVE_UP    nodes=    2,840 time=      18.6 ms nodes/s=  152,926 prunes=  1,659 ebf=2.70 value=0.0
+opening  d=4 H-AB +killers          MOVE_UP    nodes=    2,840 time=      21.2 ms nodes/s=  134,210 prunes=  1,659 ebf=2.70 value=0.0
+opening  d=4 H-AB +table            MOVE_UP    nodes=    1,272 time=      11.2 ms nodes/s=  113,836 prunes=    743 ebf=2.44 value=0.0
+opening  d=4 H-AB +deepening        MOVE_UP    nodes=    1,752 time=      15.1 ms nodes/s=  115,829 prunes=  1,016 ebf=2.54 value=0.0
+duel     d=1 Minimax                STAY       nodes=       36 time=       0.1 ms nodes/s=  292,683 prunes=      0 ebf=6.00 value=0.0
+duel     d=1 Alpha-Beta             STAY       nodes=       11 time=       0.0 ms nodes/s=  320,700 prunes=      5 ebf=3.32 value=0.0
+duel     d=1 Heuristic Minimax      FIRE       nodes=       36 time=       0.3 ms nodes/s=  117,647 prunes=      0 ebf=6.00 value=233.33
+duel     d=1 Heuristic Alpha-Beta   FIRE       nodes=       11 time=       0.2 ms nodes/s=   56,584 prunes=      5 ebf=3.32 value=233.33
+duel     d=1 H-AB no ordering       FIRE       nodes=       17 time=       0.2 ms nodes/s=   97,087 prunes=      4 ebf=4.12 value=233.33
+duel     d=1 H-AB +ordering         FIRE       nodes=       11 time=       0.2 ms nodes/s=   69,576 prunes=      5 ebf=3.32 value=233.33
+duel     d=1 H-AB +killers          FIRE       nodes=       11 time=       0.2 ms nodes/s=   65,166 prunes=      5 ebf=3.32 value=233.33
+duel     d=1 H-AB +table            FIRE       nodes=       11 time=       0.2 ms nodes/s=   65,908 prunes=      5 ebf=3.32 value=233.33
+duel     d=1 H-AB +deepening        FIRE       nodes=       11 time=       0.2 ms nodes/s=   64,668 prunes=      5 ebf=3.32 value=233.33
+duel     d=2 Minimax                STAY       nodes=    1,273 time=       5.0 ms nodes/s=  254,188 prunes=      0 ebf=5.97 value=0.0
+duel     d=2 Alpha-Beta             STAY       nodes=       80 time=       0.4 ms nodes/s=  185,874 prunes=     44 ebf=2.99 value=0.0
+duel     d=2 Heuristic Minimax      FIRE       nodes=    1,273 time=      10.6 ms nodes/s=  120,408 prunes=      0 ebf=5.97 value=233.33
+duel     d=2 Heuristic Alpha-Beta   FIRE       nodes=       98 time=       1.4 ms nodes/s=   71,637 prunes=     48 ebf=3.15 value=233.33
+duel     d=2 H-AB no ordering       FIRE       nodes=      235 time=       2.2 ms nodes/s=  107,429 prunes=     60 ebf=3.92 value=233.33
+duel     d=2 H-AB +ordering         FIRE       nodes=       88 time=       1.2 ms nodes/s=   72,781 prunes=     43 ebf=3.06 value=233.33
+duel     d=2 H-AB +killers          FIRE       nodes=       87 time=       1.2 ms nodes/s=   71,329 prunes=     43 ebf=3.05 value=233.33
+duel     d=2 H-AB +table            FIRE       nodes=       87 time=       1.2 ms nodes/s=   71,429 prunes=     43 ebf=3.05 value=233.33
+duel     d=2 H-AB +deepening        FIRE       nodes=       98 time=       1.4 ms nodes/s=   70,438 prunes=     48 ebf=3.15 value=233.33
+duel     d=3 Minimax                STAY       nodes=   43,370 time=     171.3 ms nodes/s=  253,225 prunes=      0 ebf=5.93 value=0.0
+duel     d=3 Alpha-Beta             STAY       nodes=      493 time=       2.8 ms nodes/s=  178,384 prunes=    283 ebf=2.81 value=0.0
+duel     d=3 Heuristic Minimax      FIRE       nodes=   43,370 time=     332.4 ms nodes/s=  130,456 prunes=      0 ebf=5.93 value=233.33
+duel     d=3 Heuristic Alpha-Beta   FIRE       nodes=      574 time=       6.7 ms nodes/s=   85,395 prunes=    304 ebf=2.88 value=233.33
+duel     d=3 H-AB no ordering       FIRE       nodes=    2,384 time=      19.4 ms nodes/s=  122,980 prunes=    711 ebf=3.65 value=233.33
+duel     d=3 H-AB +ordering         FIRE       nodes=      576 time=       7.0 ms nodes/s=   81,827 prunes=    302 ebf=2.88 value=233.33
+duel     d=3 H-AB +killers          FIRE       nodes=      598 time=       6.6 ms nodes/s=   90,127 prunes=    294 ebf=2.90 value=233.33
+duel     d=3 H-AB +table            FIRE       nodes=      538 time=       6.3 ms nodes/s=   85,481 prunes=    271 ebf=2.85 value=233.33
+duel     d=3 H-AB +deepening        FIRE       nodes=      574 time=       7.0 ms nodes/s=   81,903 prunes=    304 ebf=2.88 value=233.33
+duel     d=4 Minimax                STAY       nodes=1,513,473 time=    5315.8 ms nodes/s=  284,710 prunes=      0 ebf=5.92 value=0.0
+duel     d=4 Alpha-Beta             STAY       nodes=    2,945 time=       9.1 ms nodes/s=  325,411 prunes=  1,706 ebf=2.71 value=0.0
+duel     d=4 Heuristic Minimax      FIRE       nodes=1,513,473 time=   11178.6 ms nodes/s=  135,390 prunes=      0 ebf=5.92 value=233.33
+duel     d=4 Heuristic Alpha-Beta   FIRE       nodes=    3,188 time=      39.9 ms nodes/s=   79,810 prunes=  1,720 ebf=2.74 value=233.33
+duel     d=4 H-AB no ordering       FIRE       nodes=   21,354 time=     165.5 ms nodes/s=  129,025 prunes=  6,875 ebf=3.48 value=233.33
+duel     d=4 H-AB +ordering         FIRE       nodes=    3,614 time=      44.5 ms nodes/s=   81,215 prunes=  1,928 ebf=2.79 value=233.33
+duel     d=4 H-AB +killers          FIRE       nodes=    3,882 time=      44.0 ms nodes/s=   88,243 prunes=  1,889 ebf=2.81 value=233.33
+duel     d=4 H-AB +table            FIRE       nodes=    3,085 time=      32.4 ms nodes/s=   95,197 prunes=  1,484 ebf=2.73 value=233.33
+duel     d=4 H-AB +deepening        FIRE       nodes=    3,188 time=      39.1 ms nodes/s=   81,545 prunes=  1,720 ebf=2.74 value=233.33
+siege    d=1 Minimax                STAY       nodes=       36 time=       0.2 ms nodes/s=  174,757 prunes=      0 ebf=6.00 value=0.0
+siege    d=1 Alpha-Beta             STAY       nodes=       11 time=       0.1 ms nodes/s=  208,729 prunes=      5 ebf=3.32 value=0.0
+siege    d=1 Heuristic Minimax      MOVE_RIGHT nodes=       36 time=       0.3 ms nodes/s=  113,065 prunes=      0 ebf=6.00 value=-233.33
+siege    d=1 Heuristic Alpha-Beta   MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=   93,857 prunes=      5 ebf=3.32 value=-233.33
+siege    d=1 H-AB no ordering       MOVE_RIGHT nodes=       24 time=       0.2 ms nodes/s=  127,728 prunes=      4 ebf=4.90 value=-233.33
+siege    d=1 H-AB +ordering         MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=  104,662 prunes=      5 ebf=3.32 value=-233.33
+siege    d=1 H-AB +killers          MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=  167,428 prunes=      5 ebf=3.32 value=-233.33
+siege    d=1 H-AB +table            MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=  168,196 prunes=      5 ebf=3.32 value=-233.33
+siege    d=1 H-AB +deepening        MOVE_RIGHT nodes=       11 time=       0.1 ms nodes/s=  166,667 prunes=      5 ebf=3.32 value=-233.33
+siege    d=2 Minimax                STAY       nodes=    1,332 time=       4.0 ms nodes/s=  336,474 prunes=      0 ebf=6.04 value=0.0
+siege    d=2 Alpha-Beta             STAY       nodes=       82 time=       0.2 ms nodes/s=  338,703 prunes=     45 ebf=3.01 value=0.0
+siege    d=2 Heuristic Minimax      MOVE_RIGHT nodes=    1,332 time=       6.6 ms nodes/s=  200,863 prunes=      0 ebf=6.04 value=-233.33
+siege    d=2 Heuristic Alpha-Beta   MOVE_RIGHT nodes=       81 time=       0.9 ms nodes/s=   93,707 prunes=     43 ebf=3.00 value=-233.33
+siege    d=2 H-AB no ordering       MOVE_RIGHT nodes=      381 time=       1.8 ms nodes/s=  211,773 prunes=     93 ebf=4.42 value=-233.33
+siege    d=2 H-AB +ordering         MOVE_RIGHT nodes=       82 time=       0.5 ms nodes/s=  149,717 prunes=     45 ebf=3.01 value=-233.33
+siege    d=2 H-AB +killers          MOVE_RIGHT nodes=       82 time=       0.6 ms nodes/s=  137,193 prunes=     45 ebf=3.01 value=-233.33
+siege    d=2 H-AB +table            MOVE_RIGHT nodes=       70 time=       0.5 ms nodes/s=  132,450 prunes=     38 ebf=2.89 value=-233.33
+siege    d=2 H-AB +deepening        MOVE_RIGHT nodes=       81 time=       0.6 ms nodes/s=  138,865 prunes=     43 ebf=3.00 value=-233.33
+siege    d=3 Minimax                STAY       nodes=   47,128 time=     158.9 ms nodes/s=  296,650 prunes=      0 ebf=6.01 value=0.0
+siege    d=3 Alpha-Beta             STAY       nodes=      509 time=       2.3 ms nodes/s=  223,815 prunes=    293 ebf=2.83 value=0.0
+siege    d=3 Heuristic Minimax      MOVE_RIGHT nodes=   47,128 time=     254.3 ms nodes/s=  185,352 prunes=      0 ebf=6.01 value=-233.33
+siege    d=3 Heuristic Alpha-Beta   MOVE_RIGHT nodes=      422 time=       3.0 ms nodes/s=  140,143 prunes=    238 ebf=2.74 value=-233.33
+siege    d=3 H-AB no ordering       MOVE_RIGHT nodes=    4,878 time=      22.3 ms nodes/s=  218,684 prunes=  1,332 ebf=4.12 value=-233.33
+siege    d=3 H-AB +ordering         MOVE_RIGHT nodes=      509 time=       4.4 ms nodes/s=  116,915 prunes=    293 ebf=2.83 value=-233.33
+siege    d=3 H-AB +killers          MOVE_RIGHT nodes=      509 time=       4.9 ms nodes/s=  103,103 prunes=    293 ebf=2.83 value=-233.33
+siege    d=3 H-AB +table            MOVE_RIGHT nodes=      341 time=       2.6 ms nodes/s=  128,699 prunes=    195 ebf=2.64 value=-233.33
+siege    d=3 H-AB +deepening        MOVE_RIGHT nodes=      422 time=       3.4 ms nodes/s=  122,821 prunes=    238 ebf=2.74 value=-233.33
+siege    d=4 Minimax                STAY       nodes=1,657,489 time=    5356.6 ms nodes/s=  309,429 prunes=      0 ebf=5.99 value=0.0
+siege    d=4 Alpha-Beta             STAY       nodes=    3,046 time=       8.7 ms nodes/s=  350,691 prunes=  1,774 ebf=2.73 value=0.0
+siege    d=4 Heuristic Minimax      MOVE_RIGHT nodes=1,657,489 time=    9084.2 ms nodes/s=  182,459 prunes=      0 ebf=5.99 value=-233.33
+siege    d=4 Heuristic Alpha-Beta   MOVE_RIGHT nodes=    1,484 time=      13.4 ms nodes/s=  110,991 prunes=    854 ebf=2.49 value=-233.33
+siege    d=4 H-AB no ordering       MOVE_RIGHT nodes=   56,591 time=     289.4 ms nodes/s=  195,518 prunes= 15,138 ebf=3.93 value=-233.33
+siege    d=4 H-AB +ordering         MOVE_RIGHT nodes=    3,046 time=      27.3 ms nodes/s=  111,623 prunes=  1,774 ebf=2.73 value=-233.33
+siege    d=4 H-AB +killers          MOVE_RIGHT nodes=    3,046 time=      29.9 ms nodes/s=  101,761 prunes=  1,774 ebf=2.73 value=-233.33
+siege    d=4 H-AB +table            MOVE_RIGHT nodes=    1,062 time=      10.1 ms nodes/s=  105,443 prunes=    616 ebf=2.39 value=-233.33
+siege    d=4 H-AB +deepening        MOVE_RIGHT nodes=    1,484 time=      13.4 ms nodes/s=  110,874 prunes=    854 ebf=2.49 value=-233.33
+bullets  d=1 Minimax                MOVE_UP    nodes=       25 time=       0.2 ms nodes/s=  117,481 prunes=      0 ebf=5.00 value=0.0
+bullets  d=1 Alpha-Beta             MOVE_UP    nodes=        9 time=       0.1 ms nodes/s=  107,656 prunes=      4 ebf=3.00 value=0.0
+bullets  d=1 Heuristic Minimax      MOVE_LEFT  nodes=       25 time=       0.4 ms nodes/s=   63,516 prunes=      0 ebf=5.00 value=-121.92
+bullets  d=1 Heuristic Alpha-Beta   MOVE_LEFT  nodes=       14 time=       0.3 ms nodes/s=   54,837 prunes=      3 ebf=3.74 value=-121.92
+bullets  d=1 H-AB no ordering       MOVE_LEFT  nodes=       13 time=       0.2 ms nodes/s=   56,818 prunes=      3 ebf=3.61 value=-121.92
+bullets  d=1 H-AB +ordering         MOVE_LEFT  nodes=       16 time=       0.3 ms nodes/s=   57,143 prunes=      3 ebf=4.00 value=-121.92
+bullets  d=1 H-AB +killers          MOVE_LEFT  nodes=       14 time=       0.3 ms nodes/s=   51,376 prunes=      3 ebf=3.74 value=-121.92
+bullets  d=1 H-AB +table            MOVE_LEFT  nodes=       14 time=       0.2 ms nodes/s=   56,315 prunes=      3 ebf=3.74 value=-121.92
+bullets  d=1 H-AB +deepening        MOVE_LEFT  nodes=       14 time=       0.2 ms nodes/s=   55,911 prunes=      3 ebf=3.74 value=-121.92
+bullets  d=2 Minimax                MOVE_UP    nodes=      742 time=       4.8 ms nodes/s=  153,560 prunes=      0 ebf=5.22 value=0.0
+bullets  d=2 Alpha-Beta             MOVE_UP    nodes=       63 time=       0.5 ms nodes/s=  128,887 prunes=     32 ebf=2.82 value=0.0
+bullets  d=2 Heuristic Minimax      MOVE_LEFT  nodes=      742 time=       8.8 ms nodes/s=   84,182 prunes=      0 ebf=5.22 value=-140.67
+bullets  d=2 Heuristic Alpha-Beta   MOVE_LEFT  nodes=      142 time=       2.2 ms nodes/s=   64,213 prunes=     51 ebf=3.45 value=-140.67
+bullets  d=2 H-AB no ordering       MOVE_LEFT  nodes=      222 time=       2.8 ms nodes/s=   77,944 prunes=     69 ebf=3.86 value=-140.67
+bullets  d=2 H-AB +ordering         MOVE_LEFT  nodes=      242 time=       3.4 ms nodes/s=   70,194 prunes=     70 ebf=3.94 value=-140.67
+bullets  d=2 H-AB +killers          MOVE_LEFT  nodes=      187 time=       2.9 ms nodes/s=   65,451 prunes=     58 ebf=3.70 value=-140.67
+bullets  d=2 H-AB +table            MOVE_LEFT  nodes=      187 time=       2.9 ms nodes/s=   65,180 prunes=     58 ebf=3.70 value=-140.67
+bullets  d=2 H-AB +deepening        MOVE_LEFT  nodes=      142 time=       2.3 ms nodes/s=   62,481 prunes=     51 ebf=3.45 value=-140.67
+bullets  d=3 Minimax                MOVE_UP    nodes=   24,161 time=     123.3 ms nodes/s=  195,978 prunes=      0 ebf=5.38 value=0.0
+bullets  d=3 Alpha-Beta             MOVE_UP    nodes=      365 time=       2.2 ms nodes/s=  165,211 prunes=    185 ebf=2.67 value=0.0
+bullets  d=3 Heuristic Minimax      MOVE_LEFT  nodes=   24,161 time=     231.2 ms nodes/s=  104,483 prunes=      0 ebf=5.38 value=-140.67
+bullets  d=3 Heuristic Alpha-Beta   MOVE_LEFT  nodes=      580 time=       8.1 ms nodes/s=   71,650 prunes=    283 ebf=2.89 value=-140.67
+bullets  d=3 H-AB no ordering       MOVE_LEFT  nodes=    1,435 time=      15.3 ms nodes/s=   93,538 prunes=    433 ebf=3.36 value=-140.67
+bullets  d=3 H-AB +ordering         MOVE_LEFT  nodes=    1,529 time=      19.5 ms nodes/s=   78,223 prunes=    578 ebf=3.39 value=-140.67
+bullets  d=3 H-AB +killers          MOVE_LEFT  nodes=    1,360 time=      17.3 ms nodes/s=   78,670 prunes=    502 ebf=3.33 value=-140.67
+bullets  d=3 H-AB +table            MOVE_LEFT  nodes=    1,337 time=      17.1 ms nodes/s=   78,183 prunes=    494 ebf=3.32 value=-140.67
+bullets  d=3 H-AB +deepening        MOVE_LEFT  nodes=      580 time=       8.7 ms nodes/s=   66,960 prunes=    283 ebf=2.89 value=-140.67
+bullets  d=4 Minimax                MOVE_UP    nodes=  787,030 time=    3589.9 ms nodes/s=  219,233 prunes=      0 ebf=5.46 value=0.0
+bullets  d=4 Alpha-Beta             MOVE_UP    nodes=    2,058 time=       9.9 ms nodes/s=  207,805 prunes=    987 ebf=2.60 value=0.0
+bullets  d=4 Heuristic Minimax      MOVE_LEFT  nodes=  787,030 time=    6476.6 ms nodes/s=  121,519 prunes=      0 ebf=5.46 value=-146.67
+bullets  d=4 Heuristic Alpha-Beta   MOVE_LEFT  nodes=    3,982 time=      47.7 ms nodes/s=   83,399 prunes=  1,958 ebf=2.82 value=-146.67
+bullets  d=4 H-AB no ordering       MOVE_LEFT  nodes=   13,924 time=     124.8 ms nodes/s=  111,605 prunes=  3,915 ebf=3.30 value=-146.67
+bullets  d=4 H-AB +ordering         MOVE_LEFT  nodes=   10,635 time=     123.4 ms nodes/s=   86,178 prunes=  4,255 ebf=3.19 value=-146.67
+bullets  d=4 H-AB +killers          MOVE_LEFT  nodes=    8,291 time=      96.4 ms nodes/s=   86,029 prunes=  3,228 ebf=3.09 value=-146.67
+bullets  d=4 H-AB +table            MOVE_LEFT  nodes=    7,198 time=      83.8 ms nodes/s=   85,852 prunes=  2,806 ebf=3.04 value=-146.67
+bullets  d=4 H-AB +deepening        MOVE_LEFT  nodes=    3,982 time=      48.0 ms nodes/s=   82,970 prunes=  1,958 ebf=2.82 value=-146.67
+CSV : task2_tank_battle\results\phase3\search_benchmark.csv
+Plot: task2_tank_battle\results\phase3\search_benchmark.png
