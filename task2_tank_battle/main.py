@@ -1,16 +1,21 @@
 """
-Entry point of Task 2. Run from the `source` folder:
+Entry point of Task 2. Run from the `source` folder (the repository root):
     python -m task2_tank_battle                 -> GUI (menu, human vs AI, AI vs AI)
     python -m task2_tank_battle benchmark       -> compare the 4 search configurations
     python -m task2_tank_battle tournament      -> round-robin tournament between agents
     python -m task2_tank_battle depth           -> search depth reached within a time budget per move
     python -m task2_tank_battle gui --plugin path/to/other_group_agent.py
+It can also be started as a script from any folder, e.g.  python path/to/task2_tank_battle/main.py benchmark
 """
 from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 from typing import Optional, Sequence
+
+if __package__ in (None, ""):  # run as a script, not with -m: make `task2_tank_battle` and `common` importable
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
