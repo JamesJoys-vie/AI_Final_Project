@@ -1,13 +1,16 @@
 """
 Experiment 1 - compare the 4 search configurations on the same scenarios and depths.
-Metrics: time, generated nodes, evaluated leaves, prunings, effective branching factor, root value.
+Metrics: time (median of several runs), generated nodes, nodes per second, evaluated leaves, prunings,
+effective branching factor, root value.
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import random
+import statistics
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 from task2_tank_battle.agents.search_agent import SEARCH_CONFIGS, create_search_agent
 from task2_tank_battle.experiments.scenarios import build_scenarios
@@ -16,10 +19,31 @@ RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
 
 
 class SearchBenchmark:
-    def __init__(self, depths=(1, 2, 3, 4), minimax_max_depth: int = 4, seed: int = 2024):
+    """
+    Every (scenario, depth, configuration) search is repeated `repeats` times and the MEDIAN time is reported,
+    so one slow run (GC, OS scheduling) does not distort the comparison. Searches whose first run already
+    takes longer than `long_run_seconds` are run only once (deep plain Minimax takes many seconds).
+    """
+
+    def __init__(self, depths=(1, 2, 3, 4), minimax_max_depth: int = 4, seed: int = 2024,
+                 repeats: int = 5, long_run_seconds: float = 1.0):
         self.depths = depths
         self.minimax_max_depth = minimax_max_depth
         self.seed = seed
+        self.repeats = max(1, repeats)
+        self.long_run_seconds = long_run_seconds
+
+    def _timed_search(self, agent, state, depth: int, actions):
+        """Return (action, value, stats of the first run, median elapsed seconds, number of runs)."""
+        action, value, stats = agent.search.search(state, 0, depth, None, list(actions))
+        times = [stats.elapsed]
+        if stats.elapsed < self.long_run_seconds:
+            for _ in range(self.repeats - 1):
+                again_action, again_value, again_stats = agent.search.search(state, 0, depth, None, list(actions))
+                if (again_action, again_value, again_stats.nodes_generated) != (action, value, stats.nodes_generated):
+                    raise AssertionError("search is not deterministic for the same root order")
+                times.append(again_stats.elapsed)
+        return action, value, stats, statistics.median(times), len(times)
 
     def run(self, verbose: bool = True) -> List[Dict]:
         rows = []
@@ -33,14 +57,18 @@ class SearchBenchmark:
                     # Same shuffled root order for every configuration -> fair comparison.
                     actions = list(agent.search.rules.legal_actions(state, 0))
                     random.Random(self.seed).shuffle(actions)
-                    action, value, stats = agent.search.search(state, 0, depth, None, actions)
+                    action, value, stats, elapsed, runs = self._timed_search(agent, state, depth, actions)
+                    stats.elapsed = elapsed
                     root_values[config] = value
-                    row = {"scenario": scenario_name, "config": config, "action": action.name, **stats.as_dict()}
+                    row = {"scenario": scenario_name, "config": config, "action": action.name, **stats.as_dict(),
+                           "nodes_per_sec": round(stats.nodes_generated / elapsed) if elapsed > 0 else 0,
+                           "runs": runs}
                     rows.append(row)
                     if verbose:
                         print(f"{scenario_name:8s} d={depth} {config:22s} {action.name:10s} "
                               f"nodes={stats.nodes_generated:>9,} time={row['time_ms']:>10.1f} ms "
-                              f"prunes={stats.prunings:>7,} ebf={row['ebf']:.2f} value={row['value']}")
+                              f"nodes/s={row['nodes_per_sec']:>9,} prunes={stats.prunings:>7,} "
+                              f"ebf={row['ebf']:.2f} value={row['value']}", flush=True)
                 self._check_same_value(root_values, "Minimax", "Alpha-Beta")
                 self._check_same_value(root_values, "Heuristic Minimax", "Heuristic Alpha-Beta")
         return rows
@@ -92,11 +120,23 @@ class SearchBenchmark:
         return path
 
 
-def main() -> None:
-    benchmark = SearchBenchmark()
+def main(argv: Optional[Sequence[str]] = None) -> None:
+    parser = argparse.ArgumentParser(description="Compare the 4 search configurations on fixed scenarios")
+    parser.add_argument("--depths", type=int, nargs="+", default=[1, 2, 3, 4])
+    parser.add_argument("--minimax-max-depth", type=int, default=4,
+                        help="skip (Heuristic) Minimax above this depth (it grows as 36^depth)")
+    parser.add_argument("--repeats", type=int, default=5, help="runs per search; the median time is reported")
+    parser.add_argument("--seed", type=int, default=2024)
+    parser.add_argument("--output", default=None, help="CSV path (the plot is saved next to it)")
+    parser.add_argument("--no-plot", action="store_true")
+    args = parser.parse_args(argv)
+
+    benchmark = SearchBenchmark(tuple(args.depths), args.minimax_max_depth, args.seed, args.repeats)
     rows = benchmark.run()
-    print("CSV :", benchmark.save(rows))
-    print("Plot:", benchmark.plot(rows))
+    csv_path = benchmark.save(rows, Path(args.output) if args.output else None)
+    print("CSV :", csv_path)
+    if not args.no_plot:
+        print("Plot:", benchmark.plot(rows, csv_path.with_suffix(".png")))
 
 
 if __name__ == "__main__":

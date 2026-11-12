@@ -241,7 +241,23 @@ python -m task2_tank_battle benchmark                        # compare the 4 sea
 python -m task2_tank_battle tournament                       # round-robin tournament between agents
 ```
 
+Benchmark options: `--depths`, `--minimax-max-depth`, `--repeats` (times are medians; searches slower
+than 1 s run once), `--seed`, `--output`, `--no-plot`.
 Tournament options: `--agents`, `--maps`, `--depth`, `--time-limit`, `--max-turns`, `--seed`, `--output`.
+
+### Tests
+
+```bash
+python -m unittest discover -s task2_tank_battle/tests -t .
+```
+
+The tests cover:
+- **Rules:** bullets fly 3 cells per cycle with a collision check after every cell, walls, one bullet per tank,
+  movement conflicts, terminal states and utility.
+- **Reference engine:** `step()` and the heuristic `EVAL(s)` give exactly the same results as a frozen copy of
+  the original code (`tests/reference_impl.py`) on 300 sampled states and all 36 joint actions.
+- **Search:** Alpha-Beta (with and without move ordering) returns the Minimax value on sampled states; every
+  configuration takes a win in one and dodges a lethal shot; iterative deepening respects its time budget.
 
 ### GUI controls
 
@@ -373,6 +389,7 @@ MAC + MRV/Degree + LCV + initial GAC, over 10 shuffled variable orders per puzzl
 │   ├── plugins/             # Drop-in agents from other groups
 │   ├── maps/                # Text maps
 │   ├── experiments/         # Search benchmark, scenarios, tournament
+│   ├── tests/               # unittest suite (rules, reference engine, search)
 │   ├── ui/                  # PyGame interface
 │   └── results/             # CSV, logs and plots
 └── task3_kakuro/
