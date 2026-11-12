@@ -86,13 +86,10 @@ class Tournament:
                              "p2_ms_per_move": round(result.average_ms(1), 2)})
 
     def table(self) -> List[Standing]:
-        return sorted(self.standings.values(), key=lambda s: (s.points, s.wins), reverse=True)
+        return ranked(self.standings.values())
 
     def print_table(self) -> None:
-        print(f"\n{'Rank':<5}{'Agent':<26}{'P':>4}{'W':>4}{'D':>4}{'L':>4}{'Pts':>5}{'ms/move':>10}")
-        for rank, s in enumerate(self.table(), 1):
-            avg = sum(s.think_ms) / max(1, len(s.think_ms))
-            print(f"{rank:<5}{s.name:<26}{s.played:>4}{s.wins:>4}{s.draws:>4}{s.losses:>4}{s.points:>5}{avg:>10.1f}")
+        print_standings(self.table())
 
     def save(self, path: Optional[Path] = None) -> Path:
         path = path or RESULTS_DIR / "tournament_matches.csv"
@@ -101,14 +98,49 @@ class Tournament:
             writer = csv.DictWriter(file, fieldnames=list(self.records[0].keys()))
             writer.writeheader()
             writer.writerows(self.records)
-        table_path = path.with_name(path.stem.replace("matches", "standings") + ".csv")
-        with open(table_path, "w", newline="", encoding="utf-8") as file:
-            writer = csv.writer(file)
-            writer.writerow(["rank", "agent", "played", "wins", "draws", "losses", "points", "avg_ms_per_move"])
-            for rank, s in enumerate(self.table(), 1):
-                writer.writerow([rank, s.name, s.played, s.wins, s.draws, s.losses, s.points,
-                                 round(sum(s.think_ms) / max(1, len(s.think_ms)), 2)])
+        save_standings(self.table(), path.with_name(path.stem.replace("matches", "standings") + ".csv"))
         return path
+
+
+def ranked(standings) -> List[Standing]:
+    return sorted(standings, key=lambda s: (s.points, s.wins), reverse=True)
+
+
+def print_standings(table: Sequence[Standing]) -> None:
+    print(f"\n{'Rank':<5}{'Agent':<26}{'P':>4}{'W':>4}{'D':>4}{'L':>4}{'Pts':>5}{'ms/move':>10}")
+    for rank, s in enumerate(table, 1):
+        avg = sum(s.think_ms) / max(1, len(s.think_ms))
+        print(f"{rank:<5}{s.name:<26}{s.played:>4}{s.wins:>4}{s.draws:>4}{s.losses:>4}{s.points:>5}{avg:>10.1f}")
+
+
+def save_standings(table: Sequence[Standing], path: Path) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["rank", "agent", "played", "wins", "draws", "losses", "points", "avg_ms_per_move"])
+        for rank, s in enumerate(table, 1):
+            writer.writerow([rank, s.name, s.played, s.wins, s.draws, s.losses, s.points,
+                             round(sum(s.think_ms) / max(1, len(s.think_ms)), 2)])
+    return path
+
+
+def combine_match_files(paths: Sequence[Path]) -> List[Standing]:
+    """Standings over several match CSVs (e.g. one tournament per map, each with its own seed)."""
+    standings: Dict[str, Standing] = {}
+    for path in paths:
+        with open(path, newline="", encoding="utf-8") as file:
+            for row in csv.DictReader(file):
+                winner = {"Player 1 wins": 0, "Player 2 wins": 1}.get(row["outcome"])
+                for player, name in enumerate((row["player_1"], row["player_2"])):
+                    standing = standings.setdefault(name, Standing(name))
+                    standing.think_ms.append(float(row[f"p{player + 1}_ms_per_move"]))
+                    if winner is None:
+                        standing.draws += 1
+                    elif winner == player:
+                        standing.wins += 1
+                    else:
+                        standing.losses += 1
+    return ranked(standings.values())
 
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
@@ -120,7 +152,16 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     parser.add_argument("--max-turns", type=int, default=150)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--output", default=None, help="CSV path for the match list")
+    parser.add_argument("--combine", nargs="+", default=None, metavar="MATCHES_CSV",
+                        help="do not play: build one standings table from existing match CSVs "
+                             "(written to --output, default results/tournament_standings_combined.csv)")
     args = parser.parse_args(argv)
+    if args.combine:
+        table = combine_match_files([Path(p) for p in args.combine])
+        print_standings(table)
+        output = Path(args.output) if args.output else RESULTS_DIR / "tournament_standings_combined.csv"
+        print("CSV:", save_standings(table, output))
+        return
     tournament = Tournament(args.agents, args.maps, args.depth, args.time_limit, args.max_turns, args.seed)
     tournament.run()
     tournament.print_table()
