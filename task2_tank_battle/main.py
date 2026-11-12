@@ -3,6 +3,7 @@ Entry point of Task 2. Run from the `source` folder:
     python -m task2_tank_battle                 -> GUI (menu, human vs AI, AI vs AI)
     python -m task2_tank_battle benchmark       -> compare the 4 search configurations
     python -m task2_tank_battle tournament      -> round-robin tournament between agents
+    python -m task2_tank_battle depth           -> search depth reached within a time budget per move
     python -m task2_tank_battle gui --plugin path/to/other_group_agent.py
 """
 from __future__ import annotations
@@ -19,6 +20,9 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     if command == "benchmark":
         from task2_tank_battle.experiments.search_benchmark import main as run_benchmark
         run_benchmark(argv)
+    elif command == "depth":
+        from task2_tank_battle.experiments.depth_budget import main as run_depth
+        run_depth(argv)
     elif command == "tournament":
         from task2_tank_battle.experiments.tournament import main as run_tournament
         run_tournament(argv)
@@ -31,7 +35,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
         TankBattleApp(extra_plugins=args.plugin).run()
         pygame.quit()
     else:
-        print(f"Unknown command '{command}'. Use: gui | benchmark | tournament")
+        print(f"Unknown command '{command}'. Use: gui | benchmark | tournament | depth")
 
 
 if __name__ == "__main__":
