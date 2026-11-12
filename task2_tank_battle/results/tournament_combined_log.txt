@@ -1,0 +1,9 @@
+
+Rank Agent                        P   W   D   L  Pts   ms/move
+1    Heuristic Alpha-Beta        20  15   5   0   50      21.1
+2    Greedy Hunter [plugin]      20  12   4   4   40       0.0
+3    Heuristic Minimax           20  10   9   1   39      97.0
+4    Alpha-Beta                  20   0  11   9   11      11.6
+5    Minimax                     20   0   9  11    9      95.2
+6    Random                      20   0   8  12    8       0.0
+CSV: D:\Generic\Coding\introduction_ai\Project\AI_Final_Project\task2_tank_battle\results\tournament_standings_combined.csv

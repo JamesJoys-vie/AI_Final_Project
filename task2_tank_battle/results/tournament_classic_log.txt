@@ -9,20 +9,20 @@
 #009 classic          Minimax                  vs Greedy Hunter [plugin]   -> Player 2 wins  (24 turns)
 #010 classic          Greedy Hunter [plugin]   vs Minimax                  -> Player 1 wins  (24 turns)
 #011 classic          Alpha-Beta               vs Heuristic Minimax        -> Draw           (120 turns)
-#012 classic          Heuristic Minimax        vs Alpha-Beta               -> Player 1 wins  (24 turns)
+#012 classic          Heuristic Minimax        vs Alpha-Beta               -> Draw           (120 turns)
 #013 classic          Alpha-Beta               vs Heuristic Alpha-Beta     -> Player 2 wins  (24 turns)
-#014 classic          Heuristic Alpha-Beta     vs Alpha-Beta               -> Player 1 wins  (26 turns)
+#014 classic          Heuristic Alpha-Beta     vs Alpha-Beta               -> Player 1 wins  (24 turns)
 #015 classic          Alpha-Beta               vs Random                   -> Draw           (120 turns)
 #016 classic          Random                   vs Alpha-Beta               -> Draw           (120 turns)
 #017 classic          Alpha-Beta               vs Greedy Hunter [plugin]   -> Player 2 wins  (24 turns)
 #018 classic          Greedy Hunter [plugin]   vs Alpha-Beta               -> Player 1 wins  (24 turns)
 #019 classic          Heuristic Minimax        vs Heuristic Alpha-Beta     -> Draw           (24 turns)
-#020 classic          Heuristic Alpha-Beta     vs Heuristic Minimax        -> Player 1 wins  (34 turns)
+#020 classic          Heuristic Alpha-Beta     vs Heuristic Minimax        -> Player 1 wins  (24 turns)
 #021 classic          Heuristic Minimax        vs Random                   -> Player 1 wins  (24 turns)
 #022 classic          Random                   vs Heuristic Minimax        -> Player 2 wins  (24 turns)
 #023 classic          Heuristic Minimax        vs Greedy Hunter [plugin]   -> Draw           (24 turns)
 #024 classic          Greedy Hunter [plugin]   vs Heuristic Minimax        -> Draw           (24 turns)
-#025 classic          Heuristic Alpha-Beta     vs Random                   -> Player 1 wins  (25 turns)
+#025 classic          Heuristic Alpha-Beta     vs Random                   -> Player 1 wins  (26 turns)
 #026 classic          Random                   vs Heuristic Alpha-Beta     -> Player 2 wins  (24 turns)
 #027 classic          Heuristic Alpha-Beta     vs Greedy Hunter [plugin]   -> Draw           (24 turns)
 #028 classic          Greedy Hunter [plugin]   vs Heuristic Alpha-Beta     -> Draw           (24 turns)
@@ -30,10 +30,10 @@
 #030 classic          Greedy Hunter [plugin]   vs Random                   -> Player 1 wins  (24 turns)
 
 Rank Agent                        P   W   D   L  Pts   ms/move
-1    Heuristic Alpha-Beta        10   7   3   0   24      72.8
+1    Heuristic Alpha-Beta        10   7   3   0   24      15.5
 2    Greedy Hunter [plugin]      10   6   4   0   22       0.0
-3    Heuristic Minimax           10   5   4   1   19      97.5
-4    Alpha-Beta                  10   0   5   5    5      33.5
-5    Minimax                     10   0   4   6    4      96.0
+3    Heuristic Minimax           10   4   5   1   17      96.5
+4    Alpha-Beta                  10   0   6   4    6      11.4
+5    Minimax                     10   0   4   6    4      94.9
 6    Random                      10   0   4   6    4       0.0
-CSV: task2_tank_battle\results\tournament_classic_matches.csv
+CSV: D:\Generic\Coding\introduction_ai\Project\AI_Final_Project\task2_tank_battle\results\tournament_classic_matches.csv
