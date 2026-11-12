@@ -270,11 +270,25 @@ python -m task2_tank_battle                                  # GUI
 python -m task2_tank_battle gui --plugin path/to/agent.py    # GUI with an extra agent file
 python -m task2_tank_battle benchmark                        # compare the 4 search configurations
 python -m task2_tank_battle tournament                       # round-robin tournament between agents
+python -m task2_tank_battle depth                            # search depth reached within a time budget
 ```
 
 Benchmark options: `--depths`, `--minimax-max-depth`, `--repeats` (times are medians; searches slower
 than 1 s run once), `--configs`, `--ablation`, `--seed`, `--output`, `--no-plot`.
-Tournament options: `--agents`, `--maps`, `--depth`, `--time-limit`, `--max-turns`, `--seed`, `--output`.
+Tournament options: `--agents`, `--maps`, `--depth`, `--time-limit`, `--max-turns`, `--seed`, `--output`,
+`--combine <matches.csv…>` (standings over several finished tournaments, without playing).
+Depth options: `--budgets` (seconds per move), `--configs`, `--max-depth`, `--repeats`, `--seed`, `--output`, `--no-plot`.
+
+The committed results were produced with:
+
+```bash
+python -m task2_tank_battle benchmark --ablation
+python -m task2_tank_battle depth
+python -m task2_tank_battle tournament --maps classic --max-turns 120 --time-limit 0.1 --output task2_tank_battle/results/tournament_classic_matches.csv
+python -m task2_tank_battle tournament --maps "Random symmetric" --max-turns 120 --time-limit 0.1 --output task2_tank_battle/results/tournament_random_matches.csv
+python -m task2_tank_battle tournament --combine task2_tank_battle/results/tournament_classic_matches.csv task2_tank_battle/results/tournament_random_matches.csv
+python -m task2_tank_battle tournament --maps classic "Random symmetric" --depth 8 --max-turns 120 --time-limit 0.1 --output task2_tank_battle/results/tournament_depth8_matches.csv
+```
 
 ### Tests
 
@@ -343,9 +357,16 @@ from the menu.
 ### Results
 
 Stored in [`task2_tank_battle/results/`](task2_tank_battle/results/):
-`search_benchmark.csv` / `.png` (time, generated nodes, evaluated leaves, prunings and effective
-branching factor for depths 1–4 on four fixed scenarios) and the tournament logs and standings.
-The benchmark asserts that Alpha-Beta always returns the same root value as Minimax.
+- `search_benchmark.csv` / `.png`: time (median of 5 runs), generated nodes, nodes per second, evaluated
+  leaves, prunings, table hits and effective branching factor for depths 1–4 on four fixed scenarios, plus the
+  Heuristic Alpha-Beta ablation rows (`search_ablation.png`). The benchmark asserts that every configuration
+  with the same evaluator returns the same root value.
+- `depth_budget.csv` / `_summary.csv` / `.png`: depth completed by iterative deepening within 50 / 150 / 500 ms
+  per move on 12 states (scenarios, every bundled map, random 13×13 / 17×17 / 21×21 maps).
+- `tournament_classic_*`, `tournament_random_*`, `tournament_standings_combined.csv`: round-robin
+  tournaments, 100 ms per move; `tournament_depth8_*`: the same with depth cap 8 instead of 4.
+- `baseline/`, `phase2/`, `phase3/`: the benchmark after each optimization phase (and the depth experiment
+  run on the original code in `baseline/`), kept for before/after comparisons.
 
 ---
 
