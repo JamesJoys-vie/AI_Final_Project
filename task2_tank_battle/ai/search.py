@@ -4,18 +4,30 @@ Whether they are "heuristic" depends only on the Evaluator plugged in at cut-off
 
 Game tree model of one cycle: MAX picks its action, then MIN answers knowing it, then RESULT applies both.
 So depth d (cycles) = 2d plies. Assuming MIN sees MAX's move is pessimistic, hence safe for MAX.
+
+Alpha-Beta can optionally use the classic enhancements that make pruning effective (all off by default,
+so the plain configuration stays the textbook algorithm):
+- move ordering: the evaluator's static guess of the best actions first;
+- killer moves / countermoves: actions that caused a cut-off at the same ply are tried first in sibling
+  nodes; at MIN nodes the reply that refuted the same MAX action is tried first;
+- transposition table: results of already searched states, and their best action for move ordering;
+- internal iterative deepening: search depths 1..d-1 first, so the table and killers order depth d well.
+None of them changes the backed-up root value: it is always exactly the Minimax value (tested).
 """
 from __future__ import annotations
 
 import math
 import time
 from abc import ABC, abstractmethod
-from typing import List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from task2_tank_battle.ai.evaluators import Evaluator
 from task2_tank_battle.core.actions import Action
 from task2_tank_battle.core.game_rules import TankBattleRules
 from task2_tank_battle.core.game_state import GameState
+
+# Transposition-table entry flags: the stored value is exact, a lower bound (fail high) or an upper bound (fail low).
+EXACT, LOWER, UPPER = 0, 1, 2
 
 
 class SearchTimeout(Exception):
@@ -30,6 +42,7 @@ class SearchStats:
         self.nodes_generated = 0
         self.leaves_evaluated = 0
         self.prunings = 0
+        self.table_hits = 0
         self.max_ply = 0
         self.depth = 0
         self.value = 0.0
@@ -49,6 +62,7 @@ class SearchStats:
             "nodes_generated": self.nodes_generated,
             "leaves_evaluated": self.leaves_evaluated,
             "prunings": self.prunings,
+            "table_hits": self.table_hits,
             "time_ms": round(self.elapsed * 1000, 3),
             "ebf": round(self.effective_branching_factor(), 3),
             "value": round(self.value, 2),
@@ -69,24 +83,40 @@ class AdversarialSearch(ABC):
         self.player = 0
         self.opponent = 1
         self.deadline: Optional[float] = None
+        self._continuing = False
 
     def search(self, state: GameState, player: int, depth: int, deadline: Optional[float] = None,
-               root_actions: Optional[Sequence[Action]] = None) -> Tuple[Action, float, SearchStats]:
-        """Return (best action, its backed-up value, statistics) for `player` at `state`."""
+               root_actions: Optional[Sequence[Action]] = None, first_action: Optional[Action] = None,
+               keep_tables: bool = False) -> Tuple[Action, float, SearchStats]:
+        """
+        Return (best action, its backed-up value, statistics) for `player` at `state`.
+        `first_action` is searched first at the root (iterative deepening passes the previous best action).
+        `keep_tables=True` keeps the transposition table / killers of the previous call: iterative deepening
+        uses it between depths of the SAME decision. Otherwise every call starts from empty tables.
+        """
         self.stats = SearchStats(self.name)
         self.stats.depth = depth
         self.player, self.opponent = player, 1 - player
         self.deadline = deadline
+        if not keep_tables:
+            self.reset_tables()
+        self._continuing = keep_tables
         self.evaluator.prepare(state, player)
         actions = list(root_actions) if root_actions else list(self.rules.legal_actions(state, player))
         if self.use_move_ordering:
             actions = self.evaluator.order_actions(state, player, actions)
+        if first_action is not None and first_action in actions:
+            actions.remove(first_action)
+            actions.insert(0, first_action)
 
         start = time.perf_counter()
         best_action, best_value = self._root(state, depth, actions)
         self.stats.elapsed = time.perf_counter() - start
         self.stats.value = best_value
         return best_action, best_value, self.stats
+
+    def reset_tables(self) -> None:
+        """Forget everything learned in previous searches (transposition table, killers)."""
 
     @abstractmethod
     def _root(self, state: GameState, depth: int, actions: List[Action]) -> Tuple[Action, float]:
@@ -171,7 +201,32 @@ class AlphaBetaSearch(AdversarialSearch):
 
     name = "Alpha-Beta"
 
+    def __init__(self, rules: TankBattleRules, evaluator: Evaluator, use_move_ordering: bool = False,
+                 use_killers: bool = False, use_transposition: bool = False, internal_deepening: bool = False):
+        super().__init__(rules, evaluator, use_move_ordering)
+        self.use_killers = use_killers
+        self.use_transposition = use_transposition
+        self.internal_deepening = internal_deepening
+        self.table: Optional[Dict[tuple, tuple]] = None
+        self.killers: Dict[int, List[Action]] = {}
+        self.countermoves: Dict[int, Dict[Action, Action]] = {}
+        self.reset_tables()
+
+    def reset_tables(self) -> None:
+        self.table = {} if self.use_transposition else None
+        self.killers = {}
+        self.countermoves = {}
+
+    # ------------------------------------------------------------------ root
     def _root(self, state: GameState, depth: int, actions: List[Action]) -> Tuple[Action, float]:
+        if self.internal_deepening and not self._continuing:
+            # Shallower searches fill the table and killers; their best action is searched first next time.
+            for shallower in range(1, depth):
+                best, _ = self._root_search(state, shallower, actions)
+                actions = [best] + [a for a in actions if a is not best]
+        return self._root_search(state, depth, actions)
+
+    def _root_search(self, state: GameState, depth: int, actions: List[Action]) -> Tuple[Action, float]:
         best_action, best_value = actions[0], -math.inf
         alpha, beta = -math.inf, math.inf
         replies = self._actions(state, self.opponent)
@@ -182,24 +237,53 @@ class AlphaBetaSearch(AdversarialSearch):
             alpha = max(alpha, best_value)
         return best_action, best_value
 
+    # ------------------------------------------------------------------ MAX / MIN
     def _max_value(self, state: GameState, depth: int, alpha: float, beta: float, ply: int) -> float:
         leaf = self._leaf_value(state, depth, ply)
         if leaf is not None:
             return leaf
-        value = -math.inf
+
+        table = self.table
+        hint = None
+        if table is not None:
+            # The turn is part of the key, so within one search a state is always met at the same
+            # remaining depth: reusing an entry never mixes values of different depths.
+            key = (state.tanks, state.bases, state.bullets, state.turn, id(state.walls))
+            entry = table.get(key)
+            if entry is not None:
+                entry_depth, entry_value, flag, hint, _ = entry
+                if entry_depth >= depth and (flag == EXACT or (flag == LOWER and entry_value >= beta)
+                                             or (flag == UPPER and entry_value <= alpha)):
+                    self.stats.table_hits += 1
+                    return entry_value
+
+        alpha_in = alpha
         replies = self._actions(state, self.opponent)
-        for action in self._actions(state, self.player):
-            value = max(value, self._min_value(state, action, replies, depth, alpha, beta, ply + 1))
+        value, best = -math.inf, None
+        for action in self._max_actions(state, ply, hint):
+            child_value = self._min_value(state, action, replies, depth, alpha, beta, ply + 1)
+            if child_value > value:
+                value, best = child_value, action
             if value >= beta:
                 # MIN already has a better option elsewhere -> prune remaining actions.
                 self.stats.prunings += 1
-                return value
-            alpha = max(alpha, value)
+                if self.use_killers:
+                    self._remember_killer(ply, action)
+                break
+            if value > alpha:
+                alpha = value
+
+        if table is not None:
+            flag = UPPER if value <= alpha_in else LOWER if value >= beta else EXACT
+            # The walls dict is stored in the entry so that its id() in the key cannot be reused.
+            table[key] = (depth, value, flag, best, state.walls)
         return value
 
     def _min_value(self, state: GameState, my_action: Action, replies: Sequence[Action], depth: int,
                    alpha: float, beta: float, ply: int) -> float:
         """MIN's replies to `my_action` in `state`. `replies` is computed once per state by the caller."""
+        if self.use_killers:
+            replies = self._min_replies(replies, ply, my_action)
         value = math.inf
         for reply in replies:
             child = self._result(state, my_action, reply)
@@ -207,6 +291,47 @@ class AlphaBetaSearch(AdversarialSearch):
             if value <= alpha:
                 # MAX already has a better option elsewhere -> prune remaining replies.
                 self.stats.prunings += 1
+                if self.use_killers:
+                    self.countermoves.setdefault(ply, {})[my_action] = reply
+                    self._remember_killer(ply, reply)
                 return value
             beta = min(beta, value)
         return value
+
+    # ------------------------------------------------------------------ dynamic move ordering
+    def _max_actions(self, state: GameState, ply: int, hint: Optional[Action]) -> Sequence[Action]:
+        """Static order, with the table's best action and this ply's killer moves moved to the front."""
+        actions = self._actions(state, self.player)
+        front: List[Action] = []
+        if hint is not None and hint in actions:
+            front.append(hint)
+        if self.use_killers:
+            for killer in self.killers.get(ply, ()):
+                if killer not in front and killer in actions:
+                    front.append(killer)
+        if not front:
+            return actions
+        return front + [a for a in actions if a not in front]
+
+    def _min_replies(self, replies: Sequence[Action], ply: int, my_action: Action) -> Sequence[Action]:
+        """The reply that refuted `my_action` at this ply (countermove) first, then this ply's killers."""
+        front: List[Action] = []
+        counters = self.countermoves.get(ply)
+        counter = counters.get(my_action) if counters else None
+        if counter is not None and counter in replies:
+            front.append(counter)
+        for killer in self.killers.get(ply, ()):
+            if killer not in front and killer in replies:
+                front.append(killer)
+        if not front:
+            return replies
+        return front + [r for r in replies if r not in front]
+
+    def _remember_killer(self, ply: int, action: Action) -> None:
+        """Keep the two most recent cut-off actions of each ply (MAX plies are even, MIN plies odd)."""
+        killers = self.killers.get(ply)
+        if killers is None:
+            self.killers[ply] = [action]
+        elif killers[0] is not action:
+            killers.insert(0, action)
+            del killers[2:]

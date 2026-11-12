@@ -18,6 +18,11 @@ class Direction(Enum):
         self.dx = dx
         self.dy = dy
 
+    # Members are singletons compared by identity, so identity hashing is equivalent to Enum's default
+    # (which hashes the name in Python code). States containing directions are hashed as
+    # transposition-table keys, so this matters.
+    __hash__ = object.__hash__
+
 
 class Action(Enum):
     MOVE_UP = "MOVE_UP"
@@ -26,6 +31,8 @@ class Action(Enum):
     MOVE_RIGHT = "MOVE_RIGHT"
     FIRE = "FIRE"
     STAY = "STAY"
+
+    __hash__ = object.__hash__  # see Direction.__hash__
 
 
 MOVE_DIRECTIONS = {
