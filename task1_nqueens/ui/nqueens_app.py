@@ -227,7 +227,7 @@ class NQueensApp(BaseApp):
     def _draw_side_panel(self, surface: pygame.Surface) -> None:
         inner = draw_panel(surface, pygame.Rect(730, 70, 440, 190), "BOARD")
         self.size_selector.draw(surface)
-        pairs = len(self.board.attacking_pairs())
+        pairs = self.board.attacking_pair_count()
         draw_text(surface, f"Queens placed: {len(self.board.queens)} / {self.n}", (inner.x, inner.y + 88), 16)
         draw_text(surface, f"Attacking pairs: {pairs}", (inner.x, inner.y + 112), 16,
                   CONFLICT_COLOR if pairs else Theme.TEXT)
