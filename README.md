@@ -209,15 +209,39 @@ A turn-based two-player tank game. Each player controls one tank and defends one
 - Actions: `MOVE_UP`, `MOVE_DOWN`, `MOVE_LEFT`, `MOVE_RIGHT`, `FIRE`, `STAY`.
 - A tank moves one cell per cycle. A bullet travels **3 cells per cycle** in the direction the tank is
   facing, one cell at a time, with a collision check after every cell; it stops on the first wall,
-  tank or base it hits. Each tank may have one bullet in flight at a time.
+  tank or base it hits.
 - The game ends when a tank or a base is destroyed; the player whose tank and base both survive wins.
-  A turn limit produces a draw.
+
+Where the project description leaves a detail open, the implementation (`core/game_rules.py`) chooses:
+
+| Situation | Rule used |
+|-----------|-----------|
+| Order inside one cycle | Both actions are applied simultaneously: (1) tanks turn/move, (2) tanks fire, (3) bullets fly |
+| Move into a wall, base, the map edge or the other tank | The tank turns to face that direction but stays in place |
+| Both tanks move into the same cell | Neither moves (both still turn) |
+| Bullets per tank | One bullet in flight at a time; `FIRE` is not a legal action meanwhile (`one_bullet_per_tank=False` lifts this) |
+| Two bullets meet | They pass through each other (only walls, tanks and bases stop a bullet) |
+| A tank drives into a bullet's cell | It is hit before the bullet flies on |
+| Own base in the line of fire | It is hit like any base |
+| Both players lose their tank or base in the same cycle | Draw |
+| Turn limit reached (default 200 in the GUI) | Draw |
 
 ### Approach
 
-The game is modelled as a two-player **zero-sum game** (`TankBattleRules`: `ACTIONS`, `RESULT`,
-`TERMINAL-TEST`, `UTILITY`). One game cycle is searched as two plies: MAX chooses its action, then MIN
-replies, then both are applied simultaneously.
+The game is modelled as a two-player **zero-sum game**:
+
+| Component | Definition | Code |
+|-----------|------------|------|
+| State `s` | Map size, walls with HP, both tanks (position, facing, HP), both bases (HP), bullets in flight (owner, position, direction), turn number | `core/game_state.py` (`GameState`) |
+| Players | Player 1 and Player 2; the searching agent is MAX, the opponent is MIN | `PLAYER_ONE`, `PLAYER_TWO` |
+| `ACTIONS(s, p)` | The 6 actions, without `FIRE` while the player's bullet is still flying | `TankBattleRules.legal_actions` |
+| `RESULT(s, a1, a2)` | Simultaneous transition of one cycle (see the rules above) | `TankBattleRules.step` |
+| `TERMINAL-TEST(s)` | A tank or base is destroyed, or the turn limit is reached | `TankBattleRules.is_terminal` |
+| `UTILITY(s, p)` | +(10 000 − turn) if `p` wins, −(10 000 − turn) if `p` loses, 0 for a draw; faster wins score higher, and `UTILITY(s, P1) = −UTILITY(s, P2)` | `TankBattleRules.utility` |
+
+The moves are simultaneous, but Minimax needs alternating turns, so one game cycle is searched as two
+plies: MAX chooses its action, then MIN replies knowing it, then `RESULT` applies both. Letting MIN see MAX's
+move is pessimistic for MAX, so the value MAX is guaranteed is safe. A search depth of *d* cycles is 2*d* plies.
 
 | Configuration | Search | Evaluation at the depth cut-off |
 |---------------|--------|---------------------------------|
@@ -257,11 +281,11 @@ scenarios at depth 4:
 
 | Heuristic Alpha-Beta variant | Nodes | Time |
 |------------------------------|------:|-----:|
-| No move ordering | 102,280 | 634 ms |
-| + static move ordering | 20,135 | 214 ms |
-| + killer moves / countermoves | 18,059 | 192 ms |
-| + transposition table | 12,617 | 138 ms |
-| + internal iterative deepening (final) | 10,406 | 116 ms |
+| No move ordering | 102,280 | 583 ms |
+| + static move ordering | 20,135 | 199 ms |
+| + killer moves / countermoves | 18,059 | 173 ms |
+| + transposition table | 12,617 | 126 ms |
+| + internal iterative deepening (final) | 10,406 | 103 ms |
 
 ### Usage
 
@@ -272,6 +296,10 @@ python -m task2_tank_battle benchmark                        # compare the 4 sea
 python -m task2_tank_battle tournament                       # round-robin tournament between agents
 python -m task2_tank_battle depth                            # search depth reached within a time budget
 ```
+
+Task 2 runs on its own: besides `python -m task2_tank_battle` from the repository root, it can be started from
+any folder as a script, `python path/to/task2_tank_battle/main.py [command]` or `python path/to/task2_tank_battle [command]`.
+It needs only its own folder and the shared `common/` UI package next to it.
 
 Benchmark options: `--depths`, `--minimax-max-depth`, `--repeats` (times are medians; searches slower
 than 1 s run once), `--configs`, `--ablation`, `--seed`, `--output`, `--no-plot`.
@@ -305,6 +333,7 @@ The tests cover:
   bound entries of the transposition table are never used as exact values, also when the table is kept between
   iterative-deepening depths; the previous best action is searched first; every configuration takes a win in one
   and dodges a lethal shot; iterative deepening respects its time budget.
+- **Experiments:** the depth-budget experiment, the benchmark's ablation rows and `tournament --combine`.
 
 ### GUI controls
 
@@ -367,6 +396,57 @@ Stored in [`task2_tank_battle/results/`](task2_tank_battle/results/):
   tournaments, 100 ms per move; `tournament_depth8_*`: the same with depth cap 8 instead of 4.
 - `baseline/`, `phase2/`, `phase3/`: the benchmark after each optimization phase (and the depth experiment
   run on the original code in `baseline/`), kept for before/after comparisons.
+
+**Search effort at depth 4** (4 cycles = 8 plies; average of the 4 benchmark scenarios). All four
+configurations search the same states under the same conditions. Minimax and Alpha-Beta always agree on the
+root value, and so do the two heuristic configurations.
+
+| Configuration | Generated nodes | Effective branching factor | Time per decision | Nodes per second |
+|---------------|----------------:|---------------------------:|------------------:|-----------------:|
+| Minimax | 1,347,036 | 5.81 | 4,522 ms | 294,000 |
+| Alpha-Beta | 2,722 | 2.68 | 8.8 ms | 311,000 |
+| Heuristic Minimax | 1,347,036 | 5.81 | 7,990 ms | 167,000 |
+| Heuristic Alpha-Beta | 2,602 | 2.65 | 26.1 ms | 108,000 |
+
+Alpha-Beta cuts the effective branching factor from about 5.8 to about 2.7. The heuristic evaluation costs time
+per node, but it is what lets an agent play well before a win or loss is within the search horizon.
+
+**Optimizations: original code vs final code** (same machine, same scenarios, same root values):
+
+| Configuration | Time at depth 4, before → after | Speedup |
+|---------------|--------------------------------:|--------:|
+| Minimax | 11,075 → 4,522 ms | 2.4× |
+| Alpha-Beta | 21.1 → 8.8 ms | 2.4× |
+| Heuristic Minimax | 16,368 → 7,990 ms | 2.0× |
+| Heuristic Alpha-Beta | 100.2 → 26.1 ms (5,034 → 2,602 nodes) | 3.8× |
+
+The first three explore exactly the same trees as before; only the engine got faster. Heuristic Alpha-Beta also
+prunes more (the search enhancements above).
+
+**Real time: depth completed within the time budget** (average over 12 states, original → final code):
+
+| Configuration | 50 ms per move | 150 ms per move | 500 ms per move |
+|---------------|---------------:|----------------:|----------------:|
+| Minimax | 2.0 → 2.0 | 2.0 → 2.7 | 3.0 → 3.0 |
+| Alpha-Beta | 4.0 → 4.0 | 4.1 → 5.0 | 5.0 → 6.0 |
+| Heuristic Minimax | 2.0 → 2.0 | 2.0 → 2.0 | 2.5 → 3.0 |
+| Heuristic Alpha-Beta | 3.0 → 4.5 | 3.9 → 5.1 | 4.7 → 6.1 |
+
+**Tournaments** (each pair plays every map twice with sides swapped; win = 3 points, draw = 1):
+
+| Agent | 100 ms per move, depth cap 4 (W/D/L, points) | 100 ms per move, depth cap 8 (W/D/L, points) |
+|-------|-----------------------------------:|-----------------------------------:|
+| Heuristic Alpha-Beta | 15/5/0, 50 (21 ms per move) | 16/4/0, 52 |
+| Heuristic Minimax | 10/9/1, 39 | 13/4/3, 43 |
+| Greedy Hunter [plugin] | 12/4/4, 40 | 13/3/4, 42 |
+| Alpha-Beta | 0/11/9, 11 | 0/9/11, 9 |
+| Minimax | 0/9/11, 9 | 0/8/12, 8 |
+| Random | 0/8/12, 8 | 0/8/12, 8 |
+
+Heuristic Alpha-Beta never loses. With depth cap 4 it usually finishes early (21 ms of its 100 ms budget); with
+cap 8 it uses the budget to search deeper and wins more. The terminal-only configurations cannot tell good
+positions from bad ones until a win or loss is within their horizon. Plain Alpha-Beta reaches depth 5–6 and still
+scores no wins, which shows that the evaluation function matters more than raw depth in this game.
 
 ---
 
