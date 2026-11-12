@@ -1,7 +1,8 @@
 """
 Experiment 1 - compare the 4 search configurations on the same scenarios and depths.
 Metrics: time (median of several runs), generated nodes, nodes per second, evaluated leaves, prunings,
-effective branching factor, root value.
+transposition-table hits, effective branching factor, root value.
+With --ablation, Heuristic Alpha-Beta is also run with its enhancements switched on one at a time.
 """
 from __future__ import annotations
 
@@ -12,7 +13,8 @@ import statistics
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
-from task2_tank_battle.agents.search_agent import SEARCH_CONFIGS, create_search_agent
+from task2_tank_battle.agents.search_agent import ABLATION_CONFIGS, SEARCH_CONFIGS, create_search_agent
+from task2_tank_battle.ai.search import MinimaxSearch
 from task2_tank_battle.experiments.scenarios import build_scenarios
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
@@ -26,7 +28,8 @@ class SearchBenchmark:
     """
 
     def __init__(self, depths=(1, 2, 3, 4), minimax_max_depth: int = 4, seed: int = 2024,
-                 repeats: int = 5, long_run_seconds: float = 1.0):
+                 repeats: int = 5, long_run_seconds: float = 1.0, configs: Optional[Sequence[str]] = None):
+        self.configs = list(configs or SEARCH_CONFIGS)
         self.depths = depths
         self.minimax_max_depth = minimax_max_depth
         self.seed = seed
@@ -50,8 +53,8 @@ class SearchBenchmark:
         for scenario_name, state in build_scenarios().items():
             for depth in self.depths:
                 root_values = {}
-                for config in SEARCH_CONFIGS:
-                    if "Minimax" in config and depth > self.minimax_max_depth:
+                for config in self.configs:
+                    if self._config(config)[0] is MinimaxSearch and depth > self.minimax_max_depth:
                         continue
                     agent = create_search_agent(config, depth, None, self.seed)
                     # Same shuffled root order for every configuration -> fair comparison.
@@ -69,15 +72,24 @@ class SearchBenchmark:
                               f"nodes={stats.nodes_generated:>9,} time={row['time_ms']:>10.1f} ms "
                               f"nodes/s={row['nodes_per_sec']:>9,} prunes={stats.prunings:>7,} "
                               f"ebf={row['ebf']:.2f} value={row['value']}", flush=True)
-                self._check_same_value(root_values, "Minimax", "Alpha-Beta")
-                self._check_same_value(root_values, "Heuristic Minimax", "Heuristic Alpha-Beta")
+                self._check_same_value(root_values, scenario_name, depth)
         return rows
 
     @staticmethod
-    def _check_same_value(values: Dict[str, float], a: str, b: str) -> None:
-        """Alpha-Beta must return exactly the Minimax value (pruning never changes the result)."""
-        if a in values and b in values and abs(values[a] - values[b]) > 1e-9:
-            raise AssertionError(f"{a} = {values[a]} but {b} = {values[b]}")
+    def _config(name: str):
+        return SEARCH_CONFIGS.get(name) or ABLATION_CONFIGS[name]
+
+    def _check_same_value(self, values: Dict[str, float], scenario: str, depth: int) -> None:
+        """
+        Configurations with the same evaluator must return exactly the same root value: Alpha-Beta and
+        its enhancements prune and reorder the tree but never change the Minimax result.
+        """
+        by_evaluator: Dict[type, Dict[str, float]] = {}
+        for config, value in values.items():
+            by_evaluator.setdefault(self._config(config)[1], {})[config] = value
+        for group in by_evaluator.values():
+            if max(group.values()) - min(group.values()) > 1e-9:
+                raise AssertionError(f"{scenario} d={depth}: root values differ {group}")
 
     @staticmethod
     def save(rows: List[Dict], path: Optional[Path] = None) -> Path:
@@ -104,7 +116,7 @@ class SearchBenchmark:
             return sum(values) / len(values)
 
         fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-        for config in SEARCH_CONFIGS:
+        for config in dict.fromkeys(r["config"] for r in rows):
             depths = sorted({r["depth_cycles"] for r in rows if r["config"] == config})
             axes[0].plot(depths, [average(config, d, "nodes_generated") for d in depths], marker="o", label=config)
             axes[1].plot(depths, [average(config, d, "time_ms") for d in depths], marker="o", label=config)
@@ -127,11 +139,20 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
                         help="skip (Heuristic) Minimax above this depth (it grows as 36^depth)")
     parser.add_argument("--repeats", type=int, default=5, help="runs per search; the median time is reported")
     parser.add_argument("--seed", type=int, default=2024)
+    parser.add_argument("--configs", nargs="+", default=None,
+                        help=f"configurations to run (default: the 4 project configurations); "
+                             f"ablation names: {', '.join(ABLATION_CONFIGS)}")
+    parser.add_argument("--ablation", action="store_true",
+                        help="also run Heuristic Alpha-Beta with its enhancements added one at a time")
     parser.add_argument("--output", default=None, help="CSV path (the plot is saved next to it)")
     parser.add_argument("--no-plot", action="store_true")
     args = parser.parse_args(argv)
 
-    benchmark = SearchBenchmark(tuple(args.depths), args.minimax_max_depth, args.seed, args.repeats)
+    configs = list(args.configs or SEARCH_CONFIGS)
+    if args.ablation:
+        configs += [name for name in ABLATION_CONFIGS if name not in configs]
+    benchmark = SearchBenchmark(tuple(args.depths), args.minimax_max_depth, args.seed, args.repeats,
+                                configs=configs)
     rows = benchmark.run()
     csv_path = benchmark.save(rows, Path(args.output) if args.output else None)
     print("CSV :", csv_path)
