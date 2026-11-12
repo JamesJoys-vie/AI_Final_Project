@@ -14,7 +14,9 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 
 from task2_tank_battle.agents.search_agent import ABLATION_CONFIGS, SEARCH_CONFIGS, create_search_agent
+from task2_tank_battle.ai.evaluators import TerminalOnlyEvaluator
 from task2_tank_battle.ai.search import MinimaxSearch
+from task2_tank_battle.experiments.plot_style import INK, MUTED, SEQUENTIAL, SURFACE, color_of, style_axes
 from task2_tank_battle.experiments.scenarios import build_scenarios
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
@@ -110,24 +112,73 @@ class SearchBenchmark:
         except ImportError:
             return None
         path = path or RESULTS_DIR / "search_benchmark.png"
+        rows_4 = [r for r in rows if r["config"] in SEARCH_CONFIGS]
+        if not rows_4:
+            return None
 
         def average(config: str, depth: int, key: str) -> float:
-            values = [r[key] for r in rows if r["config"] == config and r["depth_cycles"] == depth]
+            values = [r[key] for r in rows_4 if r["config"] == config and r["depth_cycles"] == depth]
             return sum(values) / len(values)
 
-        fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-        for config in dict.fromkeys(r["config"] for r in rows):
-            depths = sorted({r["depth_cycles"] for r in rows if r["config"] == config})
-            axes[0].plot(depths, [average(config, d, "nodes_generated") for d in depths], marker="o", label=config)
-            axes[1].plot(depths, [average(config, d, "time_ms") for d in depths], marker="o", label=config)
-        for ax, title in zip(axes, ("Generated nodes (avg)", "Time per decision, ms (avg)")):
+        fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), facecolor=SURFACE)
+        for index, config in enumerate(dict.fromkeys(r["config"] for r in rows_4)):
+            depths = sorted({r["depth_cycles"] for r in rows_4 if r["config"] == config})
+            # Terminal-only configurations are dashed: Minimax and Heuristic Minimax generate exactly the
+            # same tree, so their node curves coincide and need more than colour to tell them apart.
+            heuristic = SEARCH_CONFIGS[config][1] is not TerminalOnlyEvaluator
+            style = dict(color=color_of(config, index), linewidth=2, marker="o" if heuristic else "s",
+                         markersize=7, linestyle="-" if heuristic else "--", label=config, zorder=3)
+            axes[0].plot(depths, [average(config, d, "nodes_generated") for d in depths], **style)
+            axes[1].plot(depths, [average(config, d, "time_ms") for d in depths], **style)
+        for ax, title in zip(axes, ("Generated nodes per decision (avg of 4 scenarios)",
+                                    "Time per decision, ms (median of runs, avg of 4 scenarios)")):
+            style_axes(ax, grid_axis="both")
             ax.set_yscale("log")
-            ax.set_xlabel("Search depth (game cycles, 1 cycle = 2 plies)")
-            ax.set_title(title)
-            ax.grid(alpha=0.3)
-        axes[0].legend(fontsize=8)
+            ax.set_xticks(sorted({r["depth_cycles"] for r in rows_4}))
+            ax.set_xlabel("Search depth (game cycles, 1 cycle = 2 plies)", color=MUTED)
+            ax.set_title(title, color=INK, loc="left", fontsize=10)
+        axes[0].legend(frameon=False, fontsize=8, loc="upper left")
         fig.tight_layout()
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=150, facecolor=SURFACE)
+        plt.close(fig)
+        return path
+
+    @staticmethod
+    def plot_ablation(rows: List[Dict], path: Optional[Path] = None) -> Optional[Path]:
+        """Bars: nodes generated at the deepest depth by each Heuristic Alpha-Beta variant (sum of 4 scenarios)."""
+        names = [name for name in ABLATION_CONFIGS if any(r["config"] == name for r in rows)]
+        if not names:
+            return None
+        try:
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
+        except ImportError:
+            return None
+        path = path or RESULTS_DIR / "search_ablation.png"
+        depth = max(r["depth_cycles"] for r in rows if r["config"] in names)
+        totals = [sum(r["nodes_generated"] for r in rows if r["config"] == name and r["depth_cycles"] == depth)
+                  for name in names]
+        labels = {"H-AB no ordering": "No move ordering", "H-AB +ordering": "+ static move ordering",
+                  "H-AB +killers": "+ killer moves / countermoves", "H-AB +table": "+ transposition table",
+                  "H-AB +deepening": "+ internal iterative deepening"}
+
+        fig, ax = plt.subplots(figsize=(8.5, 3.6), facecolor=SURFACE)
+        ys = list(range(len(names)))[::-1]
+        ax.barh(ys, totals, height=0.62, color=SEQUENTIAL, edgecolor=SURFACE, linewidth=2, zorder=3)
+        for y, total in zip(ys, totals):
+            ax.text(total * 1.01, y, f"{total:,}", va="center", ha="left", fontsize=8, color=INK)
+        ax.set_yticks(ys)
+        ax.set_yticklabels([labels.get(n, n) for n in names], color=INK)
+        style_axes(ax, grid_axis="x")
+        ax.spines["bottom"].set_visible(False)
+        ax.set_xlim(0, max(totals) * 1.15)
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda value, _: f"{value:,.0f}"))
+        ax.set_xlabel(f"Generated nodes at depth {depth} (sum of the 4 scenarios)", color=MUTED)
+        ax.set_title("Heuristic Alpha-Beta: each enhancement added on top of the previous ones",
+                     color=INK, loc="left", fontsize=10)
+        fig.tight_layout()
+        fig.savefig(path, dpi=150, facecolor=SURFACE)
         plt.close(fig)
         return path
 
@@ -158,6 +209,10 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     print("CSV :", csv_path)
     if not args.no_plot:
         print("Plot:", benchmark.plot(rows, csv_path.with_suffix(".png")))
+        ablation = benchmark.plot_ablation(rows, csv_path.with_name(csv_path.stem.replace("benchmark", "ablation")
+                                                                   + ".png"))
+        if ablation:
+            print("Plot:", ablation)
 
 
 if __name__ == "__main__":
