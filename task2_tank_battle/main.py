@@ -18,7 +18,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
 
     if command == "benchmark":
         from task2_tank_battle.experiments.search_benchmark import main as run_benchmark
-        run_benchmark()
+        run_benchmark(argv)
     elif command == "tournament":
         from task2_tank_battle.experiments.tournament import main as run_tournament
         run_tournament(argv)
